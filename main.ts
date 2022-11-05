@@ -9,7 +9,6 @@ const appPencile_icon =  `<defs><style>.cls-1{fill:none;stroke:currentColor;stro
 interface TextGeneratorSettings {
 	openai_api_key: string;
 	humanloop_api_key: string;
-	max_tokens: number;
 	context: string;
 	showStatusBar: boolean;
 }
@@ -17,7 +16,6 @@ interface TextGeneratorSettings {
 const DEFAULT_SETTINGS: TextGeneratorSettings = {
 	openai_api_key: "",
 	humanloop_api_key:"",
-	max_tokens: 160,
 	context: "",
 	showStatusBar: true
 }
@@ -41,37 +39,6 @@ export default class TextGeneratorPlugin extends Plugin {
 		return text
 	}
 
-	getMetaData() {
-		const activeFile = this.app.workspace.getActiveFile();
-	
-		if (activeFile !== null) {
-			const cache = this.app.metadataCache.getCache(activeFile.path);
-			if (cache.hasOwnProperty('frontmatter')) {
-				return cache.frontmatter;
-			}
-		}
-		return null
-	}
-
-	getMetaDataAsStr(frontmatter:any)
-	{
-		let metadata = "";
-		let keywords = ['config','position','bodyParams','reqParams'];
-		for (const [key, value] of Object.entries(frontmatter)) {
-			if (keywords.findIndex((e)=>e==key)!=-1) continue;
-			if (Array.isArray(value)) {
-				metadata += `${key} : `
-				value.forEach(v => {
-					metadata += `${value}, `
-				})
-				metadata += `\n`
-			} else {
-				metadata += `${key} : ${value} \n`
-			}
-		}
-		return metadata;
-	}
-
 	getActiveView() {
 		const activeView = this.app.workspace.getActiveViewOfType(MarkdownView);
 		if (activeView !== null) {
@@ -82,7 +49,7 @@ export default class TextGeneratorPlugin extends Plugin {
 		}
 	}
 
-	insertGeneratedText(text: string,editor:Editor) {
+	insertGeneratedText(text: string, editor:Editor) {
 		let cursor = editor.getCursor();
 		
 		if(editor.listSelections().length > 0){
@@ -245,28 +212,6 @@ export default class TextGeneratorPlugin extends Plugin {
 		});
 
 
-		this.addCommand({
-			id: 'increase-max_tokens',
-			name: 'Increase max_tokens by 10',
-			hotkeys: [{ modifiers: ["Ctrl","Alt"], key: "1" }],
-			editorCallback: async () => {
-				this.settings.max_tokens += 10;
-				await this.saveSettings();
-				this.updateStatusBar('');
-			}
-		});
-
-		this.addCommand({
-			id: 'decrease-max_tokens',
-			name: 'decrease max_tokens by 10',
-			hotkeys: [{ modifiers: ["Ctrl","Alt"], key: "2" }],
-			editorCallback: async () => {
-				this.settings.max_tokens -= 10;
-				await this.saveSettings();
-				this.updateStatusBar('');
-			}
-		});
-
 		// This adds a settings tab so the user can configure various aspects of the plugin
 		this.addSettingTab(new TextGeneratorSettingTab(this.app, this));
 
@@ -302,7 +247,7 @@ class TextGeneratorSettingTab extends PluginSettingTab {
 		containerEl.empty();
 
 		containerEl.createEl('h2', {
-			text: 'Settings for OpenAI.'
+			text: 'Settings for OpenAI'
 		});
 
 		new Setting(containerEl)
@@ -313,28 +258,6 @@ class TextGeneratorSettingTab extends PluginSettingTab {
 				.setValue(this.plugin.settings.openai_api_key)
 				.onChange(async (value) => {
 					this.plugin.settings.openai_api_key = value;
-					await this.plugin.saveSettings();
-				}));
-
-		new Setting(containerEl)
-			.setName('humanloop_api_key')
-			.setDesc('humanloop_api_key')
-			.addText(text => text
-				.setPlaceholder('Enter your api_key')
-				.setValue(this.plugin.settings.humanloop_api_key)
-				.onChange(async (value) => {
-					this.plugin.settings.humanloop_api_key = value;
-					await this.plugin.saveSettings();
-				}));
-
-		new Setting(containerEl)
-			.setName('max_tokens')
-			.setDesc('max_tokens')
-			.addText(text => text
-				.setPlaceholder('max_tokens')
-				.setValue(this.plugin.settings.max_tokens.toString())
-				.onChange(async (value) => {
-					this.plugin.settings.max_tokens = parseInt(value);
 					await this.plugin.saveSettings();
 				}));
 
