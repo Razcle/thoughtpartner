@@ -37,7 +37,7 @@ export default class TextGeneratorPlugin extends Plugin {
 			return Promise.reject(error);
 		}
 		console.log(requestResults)
-		const text = requestResults?.logs[0].text;
+		const text = requestResults?.logs[0].output;
 		return text
 	}
 
@@ -209,14 +209,14 @@ export default class TextGeneratorPlugin extends Plugin {
 		});
 
 		this.addCommand({
-			id: 'generate-text-with-metadata',
-			name: 'Generate Text (use Metadata))!',
+			id: 'summarise',
+			name: 'tl:dr',
 			icon: 'appPencile_icon',
-			hotkeys: [{ modifiers: ["Ctrl",'Alt'], key: "j" }],
+			hotkeys: [{ modifiers: ["Ctrl"], key: "t" }],
 			editorCallback: async (editor: Editor) => {
 				this.updateStatusBar(`processing... `);
 				try {
-					await this.generate(this.settings,true,editor);
+					await this.generate(this.settings,"summarise",editor);
 					this.updateStatusBar(``);
 				} catch (error) {
 					new Notice("Text Generator Plugin: Error check console CTRL+SHIFT+I");
@@ -225,6 +225,25 @@ export default class TextGeneratorPlugin extends Plugin {
 				}
 			}
 		});
+
+		this.addCommand({
+			id: 'critique',
+			name: 'critique',
+			icon: 'appPencile_icon',
+			hotkeys: [{ modifiers: ["Ctrl"], key: "q" }],
+			editorCallback: async (editor: Editor) => {
+				this.updateStatusBar(`processing... `);
+				try {
+					await this.generate(this.settings,"critique",editor);
+					this.updateStatusBar(``);
+				} catch (error) {
+					new Notice("Text Generator Plugin: Error check console CTRL+SHIFT+I");
+					this.updateStatusBar(`Error check console`);
+					setTimeout(()=>this.updateStatusBar(``),3000);
+				}
+			}
+		});
+
 
 		this.addCommand({
 			id: 'increase-max_tokens',
@@ -287,31 +306,27 @@ class TextGeneratorSettingTab extends PluginSettingTab {
 		});
 
 		new Setting(containerEl)
-			.setName('api_key')
-			.setDesc('api_key')
+			.setName('openai_api_key')
+			.setDesc('openai_api_key')
 			.addText(text => text
 				.setPlaceholder('Enter your api_key')
-				.setValue(this.plugin.settings.api_key)
+				.setValue(this.plugin.settings.openai_api_key)
 				.onChange(async (value) => {
-					this.plugin.settings.api_key = value;
+					this.plugin.settings.openai_api_key = value;
 					await this.plugin.saveSettings();
 				}));
 
 		new Setting(containerEl)
-			.setName('engine')
-			.setDesc('engine')
-			.addDropdown((cb) => {
-				cb.addOption("text-davinci-002", "text-davinci-002");
-				cb.addOption("text-davinci-001", "text-davinci-001");
-				cb.addOption("text-curie-001", "text-curie-001");
-				cb.addOption("text-babbage-001", "text-babbage-001");
-				cb.addOption("text-ada-001", "text-ada-001");
-				cb.setValue(this.plugin.settings.engine);
-				cb.onChange(async (value) => {
-					this.plugin.settings.engine = value;
+			.setName('humanloop_api_key')
+			.setDesc('humanloop_api_key')
+			.addText(text => text
+				.setPlaceholder('Enter your api_key')
+				.setValue(this.plugin.settings.humanloop_api_key)
+				.onChange(async (value) => {
+					this.plugin.settings.humanloop_api_key = value;
 					await this.plugin.saveSettings();
-				});
-			})
+				}));
+
 		new Setting(containerEl)
 			.setName('max_tokens')
 			.setDesc('max_tokens')
@@ -320,28 +335,6 @@ class TextGeneratorSettingTab extends PluginSettingTab {
 				.setValue(this.plugin.settings.max_tokens.toString())
 				.onChange(async (value) => {
 					this.plugin.settings.max_tokens = parseInt(value);
-					await this.plugin.saveSettings();
-				}));
-
-		new Setting(containerEl)
-			.setName('temperature')
-			.setDesc('temperature')
-			.addText(text => text
-				.setPlaceholder('temperature')
-				.setValue(this.plugin.settings.temperature.toString())
-				.onChange(async (value) => {
-					this.plugin.settings.temperature = parseFloat(value);
-					await this.plugin.saveSettings();
-				}));
-
-		new Setting(containerEl)
-			.setName('frequency_penalty')
-			.setDesc('frequency_penalty')
-			.addText(text => text
-				.setPlaceholder('frequency_penalty')
-				.setValue(this.plugin.settings.frequency_penalty.toString())
-				.onChange(async (value) => {
-					this.plugin.settings.frequency_penalty = parseFloat(value);
 					await this.plugin.saveSettings();
 				}));
 
