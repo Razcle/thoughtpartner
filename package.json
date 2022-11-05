@@ -1,7 +1,7 @@
 {
-	"name": "obsidian-textgenerator-plugin",
+	"name": "obsidian-thoughtpartner-plugin",
 	"version": "0.0.10",
-	"description": "Text generator is a handy plugin that helps you generate text content using GPT-3 (OpenAI).",
+	"description": "Thoughtpartner is an AI assitant that helps you get unstuck, critque your ideas and get summaries.",
 	"main": "main.js",
 	"scripts": {
 		"dev": "node esbuild.config.mjs",
