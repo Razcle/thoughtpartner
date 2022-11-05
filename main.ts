@@ -7,22 +7,18 @@ const appPencile_icon =  `<defs><style>.cls-1{fill:none;stroke:currentColor;stro
 // Remember to rename these classes and interfaces!
 
 interface TextGeneratorSettings {
-	api_key: string;
-	engine: string;
+	openai_api_key: string;
+	humanloop_api_key: string;
 	max_tokens: number;
-	temperature: number;
-	frequency_penalty: number;
-	prompt: string;
+	context: string;
 	showStatusBar: boolean;
 }
 
 const DEFAULT_SETTINGS: TextGeneratorSettings = {
-	api_key: "",
-	engine: "text-davinci-002",
+	openai_api_key: "",
+	humanloop_api_key:"",
 	max_tokens: 160,
-	temperature: 0.7,
-	frequency_penalty: 0.5,
-	prompt: "",
+	context: "",
 	showStatusBar: true
 }
 
@@ -33,9 +29,6 @@ export default class TextGeneratorPlugin extends Plugin {
 
 	async getGeneratedText(reqParams: any) {
 
-		const extractResult = reqParams?.extractResult;
-		delete reqParams?.extractResult;
-
 		let requestResults;
 		try {
 			requestResults = JSON.parse(await request(reqParams));
@@ -44,7 +37,7 @@ export default class TextGeneratorPlugin extends Plugin {
 			return Promise.reject(error);
 		}
 		console.log(requestResults)
-		const text = eval(extractResult);
+		const text = requestResults?.logs[0].text;
 		return text
 	}
 
@@ -107,77 +100,39 @@ export default class TextGeneratorPlugin extends Plugin {
 	*/
 	 
 
-	prepareParameters(params: TextGeneratorSettings,insertMetadata: boolean,editor:Editor) {
+	prepareParameters(params: TextGeneratorSettings,project_name:string = "Extend",editor:Editor) {
 		params={
 			...params,
-			prompt: this.getContext(editor)
+			context: this.getContext(editor)
 		}
 
 		let bodyParams:any = {
-			"prompt": params.prompt,
+			"project": project_name,
 			"max_tokens": params.max_tokens,
-			"temperature": params.temperature,
-			"frequency_penalty": params.frequency_penalty,
+			"inputs": {"input": params.context},
+			"provider_api_keys": {
+				"OpenAI":params.openai_api_key,
+			}
 		};
-		
+
+		console.log(bodyParams)
+
 		let reqParams = {
-			url: `https://api.openai.com/v1/engines/${params.engine}/completions`,
+			url: "https://api.humanloop.com/v1/generate",
 			method: 'POST',
-			body:'',
+			body: JSON.stringify(bodyParams),
 			headers: {
 				"Content-Type": "application/json",
-				"Authorization": `Bearer ${params.api_key}`
-			},
-			extractResult: "requestResults?.choices[0].text"
+				"X-API-KEY": params.humanloop_api_key,
+			}
 		}
-
-		if (insertMetadata) {
-			const metadata = this.getMetaData();
-			if (metadata == null) {
-				new Notice("No valid Metadata (YAML front matter) found!");
-			} else {
-				bodyParams.prompt = this.getMetaDataAsStr(metadata) + params.prompt;
-
-				if(metadata["bodyParams"] && metadata["config"]?.append?.bodyParams==false){
-					bodyParams = metadata["bodyParams"];
-				} else if (metadata["bodyParams"]) {
-					bodyParams = {...bodyParams,...metadata["bodyParams"]}; 
-				} 
-				
-				if (metadata["config"]?.context &&  metadata["config"]?.context !== "prompt") 
-				{
-					bodyParams[metadata["config"].context]=	 params.prompt;
-					delete bodyParams.prompt;
-				}
-				
-
-				reqParams.body=	JSON.stringify(bodyParams);
-
-				if (metadata["config"]?.output) 
-				{
-					reqParams.extractResult= metadata["config"]?.output
-				}
-
-				if(metadata["reqParams"] && metadata["config"]?.append?.reqParams==false){
-					reqParams = metadata["reqParams"];
-				} else if (metadata["reqParams"]) {
-					reqParams= {...reqParams,...metadata["reqParams"]} 
-				} 
-				
-			} 
-
-		} else {
-			reqParams.body=	JSON.stringify(bodyParams);
-		}
-	
-		console.log(bodyParams)
 		return reqParams;
 	}
 
 
 
-	async generate(params: TextGeneratorSettings, insertMetadata: boolean = false,editor:Editor) {
-		const parameters = this.prepareParameters(params,insertMetadata,editor)
+	async generate(params: TextGeneratorSettings, project_name:string = "Extend",editor:Editor) {
+		const parameters = this.prepareParameters(params,project_name,editor)
 		let text
 		try {
 			text = await this.getGeneratedText(parameters);
@@ -225,7 +180,7 @@ export default class TextGeneratorPlugin extends Plugin {
 			if (activeView !== null) {
 			const editor = activeView.editor;
 			try {
-				await this.generate(this.settings,false,editor);
+				await this.generate(this.settings,"Extend",editor);
 				this.updateStatusBar(``);
 			} catch (error) {
 				new Notice("Text Generator Plugin: Error check console CTRL+SHIFT+I");
@@ -236,14 +191,14 @@ export default class TextGeneratorPlugin extends Plugin {
 		});
 
 		this.addCommand({
-			id: 'generate-text',
-			name: 'Generate Text!',
+			id: 'extend-text',
+			name: 'keep writing',
 			icon: 'pencil_icon',
 			hotkeys: [{ modifiers: ["Ctrl"], key: "j" }],
 			editorCallback: async (editor: Editor) => {
 				this.updateStatusBar(`processing... `);
 				try {
-					await this.generate(this.settings,false,editor);
+					await this.generate(this.settings,"Extend",editor);
 					this.updateStatusBar(``);
 				} catch (error) {
 					new Notice("Text Generator Plugin: Error check console CTRL+SHIFT+I");
