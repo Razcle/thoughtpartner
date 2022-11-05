@@ -29,21 +29,15 @@ To generate Open AI API Key.  Follow  the following steps:
 
 # 02 Configure Text Generator plugin
 
-After installing the "Text generator plugin" and enabling it, you need to provide the generated API Key to the plugin. 
-
-<p align="center">
-  <img width="300" height="300" src="./images/20220227122219.png">
-</p>
-
+After installing the "Text generator plugin" and enabling it, you need to provide the generated API Key to the plugin. Go to the settings in Obsidian, go to community plugins and install. After you've installed you can add your API key in settings.
   
 
-To use the Text Generator Plugin efficiently, you need to understand three main steps: Considered Context, how to control the size of the generated text, and how the generation commands work.
+## Considered Content
 
-## 1. Considered Content
+To use the plugin efficiently you need to understand the context that the AI considers.
+The context that is considered can be either the selected text, or the line where the cursor is. If the line is empty, the plugin will generate text based on as much of the preciding content as possible.
 
-The context that is considered by the Plugin can be either the selected text, or the line where the cursor is. If the line is empty, the plugin will generate text based on as much of the preciding content as possible.
-
-## 3. Possible commands
+## Possible commands
 
 There are three possible commands available: "extend", "tl;dr" and "critique"
 
