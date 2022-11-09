@@ -1,6 +1,7 @@
-import { GenerationEvents } from "main";
+import { GenerationEvents } from "./main";
 import { App } from "obsidian";
 import * as React from "react";
+import { feedback, GenerateResponse } from "./humanloop";
 export const AppContext = React.createContext<App>(undefined);
 
 const handleClick = () => {
@@ -32,7 +33,7 @@ export const ResponseArea = () => {
     setActiveMode("critique");
     setResponse(event.detail);
   };
-  
+
   useListener(GenerationEvents.Extend, handleExtend);
   useListener(GenerationEvents.Summarize, handleSummarize);
   useListener(GenerationEvents.Critique, handleCritique);
@@ -40,7 +41,7 @@ export const ResponseArea = () => {
   const [activeMode, setActiveMode] = React.useState<
     "extend" | "summarize" | "critique" | null
   >(null);
-  const [response, setResponse] = React.useState<string>("");
+  const [response, setResponse] = React.useState<GenerateResponse>("");
 
   return (
     <div className="">
@@ -51,7 +52,7 @@ export const ResponseArea = () => {
 };
 
 interface ResponseCardProps {
-  response: string;
+  response: GenerateResponse;
 }
 
 const ResponseCard = ({ response }: ResponseCardProps) => {
@@ -60,7 +61,10 @@ const ResponseCard = ({ response }: ResponseCardProps) => {
       className=""
       style={{ borderRadius: "4px", border: "4px solid blue", padding: "10px" }}
     >
-      {response}
+      {response.logs?.[0].output}
+
+      <button onClick={() => feedback("good")}>good</button>
+      <button onClick={() => feedback("bad")}>bad</button>
     </div>
   );
 };
