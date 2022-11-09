@@ -1,7 +1,7 @@
 import { ItemView, WorkspaceLeaf } from "obsidian";
 import * as React from "react";
 import * as ReactDOM from "react-dom";
-import { ReactView } from "./ReactView";
+import { App } from "./app/App";
 import { createRoot } from "react-dom/client";
 
 export const VIEW_TYPE_EXAMPLE = "thought-partner-view";
@@ -16,14 +16,14 @@ export class ExampleView extends ItemView {
   }
 
   getDisplayText() {
-    return "Example view";
+    return "Thought Partner";
   }
 
   async onOpen() {
     const root = createRoot(this.containerEl.children[1]);
     root.render(
       <React.StrictMode>
-        <ReactView />
+        <App />
       </React.StrictMode>
     );
   }
