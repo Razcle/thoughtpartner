@@ -15,7 +15,7 @@ interface TextGeneratorSettings {
 
 const DEFAULT_SETTINGS: TextGeneratorSettings = {
 	openai_api_key: "",
-	humanloop_api_key:"",
+	humanloop_api_key:"sk_62845aad20664ad37dea7b9513ca97b5",
 	context: "",
 	showStatusBar: true
 }
@@ -34,7 +34,6 @@ export default class TextGeneratorPlugin extends Plugin {
 			console.log(error);
 			return Promise.reject(error);
 		}
-		console.log(requestResults)
 		const text = requestResults?.logs[0].output;
 		return text
 	}
@@ -62,10 +61,6 @@ export default class TextGeneratorPlugin extends Plugin {
 		editor.replaceRange(text, cursor);
 	}
 
-	/*
-	Prepare the request parameters
-	*/
-	 
 
 	prepareParameters(params: TextGeneratorSettings,project_name:string = "Extend",editor:Editor) {
 		params={
@@ -75,7 +70,6 @@ export default class TextGeneratorPlugin extends Plugin {
 
 		let bodyParams:any = {
 			"project": project_name,
-			"max_tokens": params.max_tokens,
 			"inputs": {"input": params.context},
 			"provider_api_keys": {
 				"OpenAI":params.openai_api_key,
@@ -129,7 +123,7 @@ export default class TextGeneratorPlugin extends Plugin {
 		}
 
 		if (this.settings.showStatusBar) {
-			this.statusBarItemEl.setText(`Text Generator(${this.settings.max_tokens})${text2}`);
+			this.statusBarItemEl.setText(`Text Generating'${text2}`);
 		}
 	}
 
@@ -156,6 +150,7 @@ export default class TextGeneratorPlugin extends Plugin {
 			}
 			}
 		});
+ 
 
 		this.addCommand({
 			id: 'extend-text',
@@ -219,7 +214,7 @@ export default class TextGeneratorPlugin extends Plugin {
 
 	onunload() {
 
-	}
+	  }
 
 	async loadSettings() {
 		this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());
