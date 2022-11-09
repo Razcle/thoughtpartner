@@ -4,7 +4,7 @@ import * as ReactDOM from "react-dom";
 import { AppContext, ReactApp } from "./react/ReactApp";
 import { createRoot } from "react-dom/client";
 
-export const VIEW_TYPE_EXAMPLE = "thought-partner-view";
+export const SIDE_PANE_VIEW_TYPE = "thought-partner-view";
 
 export class SidePane extends ItemView {
   constructor(leaf: WorkspaceLeaf) {
@@ -12,7 +12,7 @@ export class SidePane extends ItemView {
   }
 
   getViewType() {
-    return VIEW_TYPE_EXAMPLE;
+    return SIDE_PANE_VIEW_TYPE;
   }
 
   getDisplayText() {
