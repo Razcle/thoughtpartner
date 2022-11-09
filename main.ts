@@ -160,15 +160,14 @@ export default class ThoughtPartnerPlugin extends Plugin {
   async onload() {
     addIcon("pencil_icon", pencil_icon);
     addIcon("appPencile_icon", appPencile_icon);
-
     this.registerView(SIDE_PANE_VIEW_TYPE, (leaf) => new SidePane(leaf));
     this.addRibbonIcon("dice", "Open Thought Partner", () => {
       this.activateView();
     });
     await this.loadSettings();
     this.statusBarItemEl = this.addStatusBarItem();
-    // This creates an icon in the left ribbon.
 
+    // This creates an icon in the left ribbon.
     const ribbonIconEl = this.addRibbonIcon(
       "pencil_icon",
       "Generate Text!",
@@ -223,7 +222,7 @@ export default class ThoughtPartnerPlugin extends Plugin {
 
     this.addCommand({
       id: "summarise",
-      name: "tl;dr",
+      name: "Summarise (tldr)",
       icon: "appPencile_icon",
       hotkeys: [{ modifiers: ["Ctrl"], key: "t" }],
       editorCallback: async (editor: Editor) => {

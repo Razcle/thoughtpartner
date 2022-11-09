@@ -32,9 +32,11 @@ export const ResponseArea = () => {
     setActiveMode("critique");
     setResponse(event.detail);
   };
+  
   useListener(GenerationEvents.Extend, handleExtend);
   useListener(GenerationEvents.Summarize, handleSummarize);
   useListener(GenerationEvents.Critique, handleCritique);
+
   const [activeMode, setActiveMode] = React.useState<
     "extend" | "summarize" | "critique" | null
   >(null);
@@ -42,6 +44,7 @@ export const ResponseArea = () => {
 
   return (
     <div className="">
+      {activeMode}
       <ResponseCard response={response} />
     </div>
   );
@@ -52,7 +55,14 @@ interface ResponseCardProps {
 }
 
 const ResponseCard = ({ response }: ResponseCardProps) => {
-  return <div className="">{response}</div>;
+  return (
+    <div
+      className=""
+      style={{ borderRadius: "4px", border: "4px solid blue", padding: "10px" }}
+    >
+      {response}
+    </div>
+  );
 };
 
 export const ReactApp = () => {
