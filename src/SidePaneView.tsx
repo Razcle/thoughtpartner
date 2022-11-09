@@ -1,7 +1,7 @@
 import { ItemView, WorkspaceLeaf } from "obsidian";
 import * as React from "react";
 import * as ReactDOM from "react-dom";
-import { AppContext, ReactApp } from "./react/ReactApp";
+import { AppContext, ReactApp } from "./ReactApp";
 import { createRoot } from "react-dom/client";
 
 export const SIDE_PANE_VIEW_TYPE = "thought-partner-view";
@@ -21,7 +21,7 @@ export class SidePane extends ItemView {
 
   async onOpen() {
     const root = createRoot(this.containerEl.children[1]);
-    root.render(<ReactApp something="arse" />);
+    root.render(<ReactApp />);
   }
 
   async onClose() {

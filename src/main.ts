@@ -9,7 +9,7 @@ import {
   request,
   Setting,
 } from "obsidian";
-import { SidePane, SIDE_PANE_VIEW_TYPE } from "view";
+import { SidePane, SIDE_PANE_VIEW_TYPE } from "src/SidePaneView";
 
 const EXCALIDRAW_ICON = `<g transform="translate(30,0)"><path d="M5.81,27.19a1,1,0,0,1-.71-.29A1,1,0,0,1,4.82,26l1.26-8.33a1,1,0,0,1,.28-.56L18.54,5a3.08,3.08,0,0,1,4.24,0L27,9.22a3,3,0,0,1,0,4.24L14.85,25.64a1,1,0,0,1-.56.28L6,27.18ZM8,18.34,7,25l6.66-1,12-11.94a1,1,0,0,0,.29-.71,1,1,0,0,0-.29-.7L21.36,6.39a1,1,0,0,0-1.41,0Z"/><path d="M24.9,15.17a1,1,0,0,1-.71-.29L17.12,7.81a1,1,0,1,1,1.42-1.42l7.07,7.07a1,1,0,0,1,0,1.42A1,1,0,0,1,24.9,15.17Z"/><path d="M25,30H5a1,1,0,0,1,0-2H25a1,1,0,0,1,0,2Z"/><path d="M11.46,14.83,6.38,19.77c-1.18,1.17-.74,4.25.43,5.42s4.37,1.46,5.54.29l6-6.1s-5.73,2.56-7.07,1.06S11.46,14.83,11.46,14.83Z"/></g>`;
 //const pencil_icon = EXCALIDRAW_ICON
@@ -68,7 +68,6 @@ export default class ThoughtPartnerPlugin extends Plugin {
 
   insertGeneratedText(text: string, editor: Editor) {
     let cursor = editor.getCursor();
-
     // Insert at the end of any selection
     if (editor.listSelections().length > 0) {
       const anchor = editor.listSelections()[0].anchor;
@@ -88,21 +87,21 @@ export default class ThoughtPartnerPlugin extends Plugin {
 	*/
 
   prepareParameters(
-    params: ThoughtPartnerSettings,
+    settings: ThoughtPartnerSettings,
     project_name: string = "Extend",
     editor: Editor
   ) {
-    params = {
-      ...params,
+    const params = {
+      ...settings,
       context: this.getContext(editor),
     };
 
     let bodyParams: any = {
       project: project_name,
-      max_tokens: params.max_tokens,
-      inputs: { input: params.context },
+      max_tokens: settings.max_tokens,
+      inputs: { input: settings.context },
       provider_api_keys: {
-        OpenAI: params.openai_api_key,
+        OpenAI: settings.openai_api_key,
       },
     };
 
@@ -121,11 +120,11 @@ export default class ThoughtPartnerPlugin extends Plugin {
   }
 
   async generate(
-    params: ThoughtPartnerSettings,
+    settings: ThoughtPartnerSettings,
     project_name: string,
     editor: Editor
   ): Promise<string> {
-    const parameters = this.prepareParameters(params, project_name, editor);
+    const parameters = this.prepareParameters(settings, project_name, editor);
     let text;
     try {
       text = await this.getGeneratedText(parameters);
