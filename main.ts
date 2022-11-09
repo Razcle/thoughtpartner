@@ -278,14 +278,29 @@ class TextGeneratorSettingTab extends PluginSettingTab {
 		});
 
 		new Setting(containerEl)
-			.setName("openai_api_key")
-			.setDesc("openai_api_key")
+			.setName("OpenAI API Key")
+			.setDesc("Set your OpenAI API Key. Go to https://beta.openai.com/")
 			.addText((text) =>
 				text
 					.setPlaceholder("Enter your api_key")
 					.setValue(this.plugin.settings.openai_api_key)
 					.onChange(async (value) => {
 						this.plugin.settings.openai_api_key = value;
+						await this.plugin.saveSettings();
+					})
+			);
+
+		new Setting(containerEl)
+			.setName("Humanloop API Key")
+			.setDesc(
+				"Set your Humanloop API Key. Go to https://app.humanloop.com/settings to get it."
+			)
+			.addText((text) =>
+				text
+					.setPlaceholder("Set your humanlo api_key")
+					.setValue(this.plugin.settings.humanloop_api_key)
+					.onChange(async (value) => {
+						this.plugin.settings.humanloop_api_key = value;
 						await this.plugin.saveSettings();
 					})
 			);
