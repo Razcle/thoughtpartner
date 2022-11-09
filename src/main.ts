@@ -9,6 +9,7 @@ import {
   Setting,
 } from "obsidian";
 import { extractText, generate, GenerateResponse } from "./humanloop";
+import { ThoughtPartnerSettingTab } from "./settings";
 import { SidePane, SIDE_PANE_VIEW_TYPE } from "./view";
 
 const EXCALIDRAW_ICON = `<g transform="translate(30,0)"><path d="M5.81,27.19a1,1,0,0,1-.71-.29A1,1,0,0,1,4.82,26l1.26-8.33a1,1,0,0,1,.28-.56L18.54,5a3.08,3.08,0,0,1,4.24,0L27,9.22a3,3,0,0,1,0,4.24L14.85,25.64a1,1,0,0,1-.56.28L6,27.18ZM8,18.34,7,25l6.66-1,12-11.94a1,1,0,0,0,.29-.71,1,1,0,0,0-.29-.7L21.36,6.39a1,1,0,0,0-1.41,0Z"/><path d="M24.9,15.17a1,1,0,0,1-.71-.29L17.12,7.81a1,1,0,1,1,1.42-1.42l7.07,7.07a1,1,0,0,1,0,1.42A1,1,0,0,1,24.9,15.17Z"/><path d="M25,30H5a1,1,0,0,1,0-2H25a1,1,0,0,1,0,2Z"/><path d="M11.46,14.83,6.38,19.77c-1.18,1.17-.74,4.25.43,5.42s4.37,1.46,5.54.29l6-6.1s-5.73,2.56-7.07,1.06S11.46,14.83,11.46,14.83Z"/></g>`;
@@ -93,16 +94,7 @@ export default class ThoughtPartnerPlugin extends Plugin {
       },
     };
     console.log(bodyParams);
-    let reqParams = {
-      url: "https://api.humanloop.com/v1/generate",
-      method: "POST",
-      body: JSON.stringify(bodyParams),
-      headers: {
-        "Content-Type": "application/json",
-        "X-API-KEY": params.humanloop_api_key,
-      },
-    };
-    return reqParams;
+    return bodyParams;
   }
 
   async getGeneration(
@@ -112,7 +104,7 @@ export default class ThoughtPartnerPlugin extends Plugin {
   ): Promise<GenerateResponse> {
     const parameters = this.prepareParameters(settings, project_name, editor);
     try {
-      return await generate(parameters);
+      return await generate(parameters, settings.humanloop_api_key);
     } catch (error) {
       return Promise.reject(error);
     }
@@ -292,64 +284,5 @@ export default class ThoughtPartnerPlugin extends Plugin {
     this.app.workspace.revealLeaf(
       this.app.workspace.getLeavesOfType(SIDE_PANE_VIEW_TYPE)[0]
     );
-  }
-}
-
-class ThoughtPartnerSettingTab extends PluginSettingTab {
-  plugin: ThoughtPartnerPlugin;
-
-  constructor(app: App, plugin: ThoughtPartnerPlugin) {
-    super(app, plugin);
-    this.plugin = plugin;
-  }
-
-  display(): void {
-    const { containerEl } = this;
-
-    containerEl.empty();
-
-    containerEl.createEl("h2", {
-      text: "Settings for OpenAI",
-    });
-
-    new Setting(containerEl)
-      .setName("OpenAI API Key")
-      .setDesc("Set your OpenAI API Key. Go to https://beta.openai.com/")
-      .addText((text) =>
-        text
-          .setPlaceholder("Enter your api_key")
-          .setValue(this.plugin.settings.openai_api_key)
-          .onChange(async (value) => {
-            this.plugin.settings.openai_api_key = value;
-            await this.plugin.saveSettings();
-          })
-      );
-
-    new Setting(containerEl)
-      .setName("Humanloop API Key")
-      .setDesc(
-        "Set your Humanloop API Key. Go to https://app.humanloop.com/settings to get it."
-      )
-      .addText((text) =>
-        text
-          .setPlaceholder("Set your humanlo api_key")
-          .setValue(this.plugin.settings.humanloop_api_key)
-          .onChange(async (value) => {
-            this.plugin.settings.humanloop_api_key = value;
-            await this.plugin.saveSettings();
-          })
-      );
-
-    new Setting(containerEl)
-      .setName("showStatusBar")
-      .setDesc("Show information in the Status Bar")
-      .addToggle((v) =>
-        v
-          .setValue(this.plugin.settings.showStatusBar)
-          .onChange(async (value) => {
-            this.plugin.settings.showStatusBar = value;
-            await this.plugin.saveSettings();
-          })
-      );
   }
 }

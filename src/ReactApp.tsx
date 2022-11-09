@@ -3,6 +3,17 @@ import { App } from "obsidian";
 import * as React from "react";
 import { feedback, GenerateResponse } from "./humanloop";
 export const AppContext = React.createContext<App>(undefined);
+import {
+  addIcon,
+  App,
+  Editor,
+  MarkdownView,
+  Notice,
+  Plugin,
+  PluginSettingTab,
+  Setting,
+} from "obsidian";
+import { useObsidianApp } from "./AppContext";
 
 const handleClick = () => {
   console.log("clicked");
@@ -61,18 +72,19 @@ const ResponseCard = ({ response }: ResponseCardProps) => {
       className=""
       style={{ borderRadius: "4px", border: "4px solid blue", padding: "10px" }}
     >
-      {response.logs?.[0].output}
-
-      <button onClick={() => feedback("good")}>good</button>
-      <button onClick={() => feedback("bad")}>bad</button>
+      <button onClick={() => feedback("good", "sd")}>good</button>
+      <button onClick={() => feedback("bad", "sd")}>bad</button>
     </div>
   );
 };
 
 export const ReactApp = () => {
+  const app = useObsidianApp();
+
   return (
     <main>
       <h4>Thought Partner</h4>
+      {app?.vault?.getName() || "no vault"}
       <ResponseArea />
       <button onClick={handleClick}>summarise</button>
     </main>
