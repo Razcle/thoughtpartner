@@ -6,7 +6,7 @@ import { createRoot } from "react-dom/client";
 
 export const VIEW_TYPE_EXAMPLE = "thought-partner-view";
 
-export class ExampleView extends ItemView {
+export class SidePane extends ItemView {
   constructor(leaf: WorkspaceLeaf) {
     super(leaf);
   }
@@ -21,13 +21,7 @@ export class ExampleView extends ItemView {
 
   async onOpen() {
     const root = createRoot(this.containerEl.children[1]);
-    root.render(
-      <React.StrictMode>
-        {/* <AppContext.Provider value={this.app}> */}
-        <ReactApp />
-        {/* </AppContext.Provider> */}
-      </React.StrictMode>
-    );
+    root.render(<ReactApp something="arse" />);
   }
 
   async onClose() {

@@ -9,7 +9,7 @@ import {
   request,
   Setting,
 } from "obsidian";
-import { ExampleView, VIEW_TYPE_EXAMPLE } from "view";
+import { SidePane, VIEW_TYPE_EXAMPLE } from "view";
 
 const EXCALIDRAW_ICON = `<g transform="translate(30,0)"><path d="M5.81,27.19a1,1,0,0,1-.71-.29A1,1,0,0,1,4.82,26l1.26-8.33a1,1,0,0,1,.28-.56L18.54,5a3.08,3.08,0,0,1,4.24,0L27,9.22a3,3,0,0,1,0,4.24L14.85,25.64a1,1,0,0,1-.56.28L6,27.18ZM8,18.34,7,25l6.66-1,12-11.94a1,1,0,0,0,.29-.71,1,1,0,0,0-.29-.7L21.36,6.39a1,1,0,0,0-1.41,0Z"/><path d="M24.9,15.17a1,1,0,0,1-.71-.29L17.12,7.81a1,1,0,1,1,1.42-1.42l7.07,7.07a1,1,0,0,1,0,1.42A1,1,0,0,1,24.9,15.17Z"/><path d="M25,30H5a1,1,0,0,1,0-2H25a1,1,0,0,1,0,2Z"/><path d="M11.46,14.83,6.38,19.77c-1.18,1.17-.74,4.25.43,5.42s4.37,1.46,5.54.29l6-6.1s-5.73,2.56-7.07,1.06S11.46,14.83,11.46,14.83Z"/></g>`;
 //const pencil_icon = EXCALIDRAW_ICON
@@ -148,7 +148,7 @@ export default class TextGeneratorPlugin extends Plugin {
     }
 
     if (this.settings.showStatusBar) {
-      this.statusBarItemEl.setText(`Text Generating'${text2}`);
+      this.statusBarItemEl.setText(`Thought Partner'${text2}`);
     }
   }
 
@@ -156,7 +156,7 @@ export default class TextGeneratorPlugin extends Plugin {
     addIcon("pencil_icon", pencil_icon);
     addIcon("appPencile_icon", appPencile_icon);
 
-    this.registerView(VIEW_TYPE_EXAMPLE, (leaf) => new ExampleView(leaf));
+    this.registerView(VIEW_TYPE_EXAMPLE, (leaf) => new SidePane(leaf));
     this.addRibbonIcon("dice", "Activate view", () => {
       this.activateView();
     });

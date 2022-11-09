@@ -18,10 +18,10 @@ const handleClick = () => {
   console.log("clicked");
 };
 
-export const ReactApp = () => {
+export const ReactApp = ({ something }: { something: string }) => {
   return (
     <main>
-      <h4>Thought Partner</h4>
+      <h4>Thought Partner {something}</h4>
       <button onClick={handleClick}>summarise</button>
     </main>
   );
