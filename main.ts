@@ -62,6 +62,7 @@ export default class TextGeneratorPlugin extends Plugin {
   insertGeneratedText(text: string, editor: Editor) {
     let cursor = editor.getCursor();
 
+    // Insert at the end of any selection
     if (editor.listSelections().length > 0) {
       const anchor = editor.listSelections()[0].anchor;
       const head = editor.listSelections()[0].head;
@@ -176,9 +177,7 @@ export default class TextGeneratorPlugin extends Plugin {
             await this.generate(this.settings, "Extend", editor);
             this.updateStatusBar(``);
           } catch (error) {
-            new Notice(
-              "Text Generator Plugin: Error check console CTRL+SHIFT+I"
-            );
+            new Notice("Thought Partner: Error check console CTRL+SHIFT+I");
             this.updateStatusBar(`Error: Check Console`);
             setTimeout(() => this.updateStatusBar(``), 3000);
           }
@@ -205,7 +204,7 @@ export default class TextGeneratorPlugin extends Plugin {
           await this.generate(this.settings, "Extend", editor);
           this.updateStatusBar(``);
         } catch (error) {
-          new Notice("Text Generator Plugin: Error check console CTRL+SHIFT+I");
+          new Notice("Thought Partner: Error check console CTRL+SHIFT+I");
           this.updateStatusBar(`Error check console`);
           setTimeout(() => this.updateStatusBar(``), 3000);
         }
@@ -223,7 +222,7 @@ export default class TextGeneratorPlugin extends Plugin {
           await this.generate(this.settings, "summarise", editor);
           this.updateStatusBar(``);
         } catch (error) {
-          new Notice("Text Generator Plugin: Error check console CTRL+SHIFT+I");
+          new Notice("Thought Partner: Error check console CTRL+SHIFT+I");
           this.updateStatusBar(`Error check console`);
           setTimeout(() => this.updateStatusBar(``), 3000);
         }
@@ -241,7 +240,7 @@ export default class TextGeneratorPlugin extends Plugin {
           await this.generate(this.settings, "critique", editor);
           this.updateStatusBar(``);
         } catch (error) {
-          new Notice("Text Generator Plugin: Error check console CTRL+SHIFT+I");
+          new Notice("Thought Partner: Error check console CTRL+SHIFT+I");
           this.updateStatusBar(`Error check console`);
           setTimeout(() => this.updateStatusBar(``), 3000);
         }
