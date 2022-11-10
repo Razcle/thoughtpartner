@@ -1,12 +1,7 @@
-import { App } from "obsidian";
 import * as React from "react";
 import { useObsidianApp } from "./AppContext";
 import { feedback, GenerateResponse } from "./humanloop";
 import { GenerationEvents } from "./main";
-
-const handleClick = () => {
-  console.log("clicked");
-};
 
 const useListener = (eventName: string, handler: (event: Event) => void) => {
   React.useEffect(() => {
@@ -25,7 +20,7 @@ export const ResponseArea = () => {
   };
   const handleSummarize = (event: CustomEvent) => {
     console.log({ event });
-    setActiveMode("summarize");
+    setActiveMode("summarise");
     setResponse(event.detail);
   };
   const handleCritique = (event: CustomEvent) => {
@@ -39,14 +34,13 @@ export const ResponseArea = () => {
   useListener(GenerationEvents.Critique, handleCritique);
 
   const [activeMode, setActiveMode] = React.useState<
-    "extend" | "summarize" | "critique" | null
+    "extend" | "summarise" | "critique" | null
   >(null);
-  const [response, setResponse] = React.useState<GenerateResponse>("");
+  const [response, setResponse] = React.useState<GenerateResponse | null>(null);
 
   return (
     <div className="">
-      {activeMode}
-      <ResponseCard response={response} />
+      {activeMode !== null && <ResponseCard response={response} />}
     </div>
   );
 };
@@ -56,6 +50,9 @@ interface ResponseCardProps {
 }
 
 const ResponseCard = ({ response }: ResponseCardProps) => {
+  const { plugin } = useObsidianApp();
+  const openai_api_key = plugin.settings.openai_api_key;
+
   return (
     <>
       <div
@@ -67,7 +64,20 @@ const ResponseCard = ({ response }: ResponseCardProps) => {
         }}
       >
         {response?.data?.[0].output}
-        <button onClick={() => feedback("good", response.data?.[0].id)}>
+
+        <button
+          onClick={() =>
+            feedback(
+              {
+                group: "vote",
+                label: "upvote",
+                data_id: response.data?.[0].id,
+                user: "obsidian-user",
+              },
+              openai_api_key
+            )
+          }
+        >
           good
         </button>
         <button onClick={() => feedback("bad", response.data?.[0].id)}>
@@ -80,14 +90,13 @@ const ResponseCard = ({ response }: ResponseCardProps) => {
 };
 
 export const ReactApp = () => {
-  const app = useObsidianApp();
+  const { app } = useObsidianApp();
 
   return (
     <main>
       <h4>Thought Partner</h4>
       {app?.vault?.getName() || "no vault"}
       <ResponseArea />
-      <button onClick={handleClick}>summarise</button>
     </main>
   );
 };

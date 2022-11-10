@@ -40,7 +40,12 @@ export const extractText = (response: GenerateResponse): string => {
 };
 
 export const feedback = async (
-  body: any,
+  body: {
+    data_id: string;
+    label: string;
+    group: string;
+    user: string;
+  },
   api_key: string
 ): Promise<FeedbackResponse> => {
   console.log("feedback", body);

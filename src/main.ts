@@ -156,7 +156,7 @@ export default class ThoughtPartnerPlugin extends Plugin {
 
     this.registerView(
       SIDE_PANE_VIEW_TYPE,
-      (leaf) => new SidePane(leaf, this.app)
+      (leaf) => new SidePane(leaf, this.app, this)
     );
     this.addRibbonIcon("cloud-lightning", "Open Thought Partner", (event) => {
       this.activateView();
@@ -164,6 +164,7 @@ export default class ThoughtPartnerPlugin extends Plugin {
     this.registerEvent(Events);
 
     await this.loadSettings();
+
     this.statusBarItemEl = this.addStatusBarItem();
 
     this.addCommand({
@@ -242,9 +243,9 @@ export default class ThoughtPartnerPlugin extends Plugin {
     }
   }
   async summarise(editor: Editor) {
-    this.updateStatusBar(`summarising... `);
+    this.updateStatusBar(`Summarising... `);
     try {
-      new Notice("Summarizing...");
+      new Notice("Summarising...");
       const response = await this.getGeneration(
         this.settings,
         "summarise",

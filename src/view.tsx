@@ -4,13 +4,17 @@ import * as ReactDOM from "react-dom";
 import { ReactApp } from "./ReactApp";
 import { createRoot } from "react-dom/client";
 import { AppContext } from "./AppContext";
+import ThoughtPartnerPlugin from "./main";
 
 export const SIDE_PANE_VIEW_TYPE = "thought-partner-view";
 
 export class SidePane extends ItemView {
-  constructor(leaf: WorkspaceLeaf, app: App) {
+  private plugin: ThoughtPartnerPlugin;
+
+  constructor(leaf: WorkspaceLeaf, app: App, plugin: ThoughtPartnerPlugin) {
     super(leaf);
     this.app = app;
+    this.plugin = plugin;
   }
 
   getViewType() {
@@ -24,7 +28,7 @@ export class SidePane extends ItemView {
   async onOpen() {
     const root = createRoot(this.containerEl.children[1]);
     root.render(
-      <AppContext.Provider value={this.app}>
+      <AppContext.Provider value={{ app: this.app, plugin: this.plugin }}>
         <ReactApp />
       </AppContext.Provider>
     );
