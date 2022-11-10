@@ -181,7 +181,7 @@ export default class ThoughtPartnerPlugin extends Plugin {
           .setTitle("Critique")
           .setIcon("zap")
           .onClick(() => {
-            this.summarise(this.getEditor());
+            this.critique(this.getEditor());
           })
       );
     });
@@ -213,24 +213,7 @@ export default class ThoughtPartnerPlugin extends Plugin {
       icon: "pencil_icon",
       hotkeys: [{ modifiers: ["Ctrl"], key: "j" }],
       editorCallback: async (editor: Editor) => {
-        this.updateStatusBar(`writing... `);
-        try {
-          new Notice("Generating...");
-          const response = await this.getGeneration(
-            this.settings,
-            "Extend",
-            editor
-          );
-          window.dispatchEvent(
-            new CustomEvent(GenerationEvents.Extend, { detail: response })
-          );
-          this.insertGeneratedText(response.data[0]?.raw_output, editor);
-          this.updateStatusBar(``);
-        } catch (error) {
-          new Notice("Thought Partner: Error check console CTRL+SHIFT+I");
-          this.updateStatusBar(`Error check console`);
-          setTimeout(() => this.updateStatusBar(``), 3000);
-        }
+        this.continueWriting(editor);
       },
     });
 
@@ -250,24 +233,7 @@ export default class ThoughtPartnerPlugin extends Plugin {
       icon: "appPencile_icon",
       hotkeys: [{ modifiers: ["Ctrl"], key: "q" }],
       editorCallback: async (editor: Editor) => {
-        this.updateStatusBar(`critiquing... `);
-        try {
-          new Notice("Hmmm... thinking...");
-          const response = await this.getGeneration(
-            this.settings,
-            "critique",
-            editor
-          );
-          window.dispatchEvent(
-            new CustomEvent(GenerationEvents.Critique, { detail: response })
-          );
-          this.insertGeneratedText(response.data[0]?.raw_output, editor);
-          this.updateStatusBar(``);
-        } catch (error) {
-          new Notice("Thought Partner: Error check console CTRL+SHIFT+I");
-          this.updateStatusBar(`Error check console`);
-          setTimeout(() => this.updateStatusBar(``), 3000);
-        }
+        this.critique(editor);
       },
     });
 
@@ -287,9 +253,28 @@ export default class ThoughtPartnerPlugin extends Plugin {
     return null;
   }
 
+  async continueWriting(editor: Editor) {
+    this.updateStatusBar(`writing... `);
+    try {
+      new Notice("Generating...");
+      const response = await this.getGeneration(
+        this.settings,
+        "Extend",
+        editor
+      );
+      window.dispatchEvent(
+        new CustomEvent(GenerationEvents.Extend, { detail: response })
+      );
+      this.insertGeneratedText(response.data[0]?.raw_output, editor);
+      this.updateStatusBar(``);
+    } catch (error) {
+      new Notice("Thought Partner: Error check console CTRL+SHIFT+I");
+      this.updateStatusBar(`Error check console`);
+      setTimeout(() => this.updateStatusBar(``), 3000);
+    }
+  }
   async summarise(editor: Editor) {
     this.updateStatusBar(`summarising... `);
-
     try {
       new Notice("Summarizing...");
       const response = await this.getGeneration(
@@ -299,6 +284,27 @@ export default class ThoughtPartnerPlugin extends Plugin {
       );
       window.dispatchEvent(
         new CustomEvent(GenerationEvents.Summarize, { detail: response })
+      );
+      this.insertGeneratedText(response.data[0]?.raw_output, editor);
+      this.updateStatusBar(``);
+    } catch (error) {
+      new Notice("Thought Partner: Error check console CTRL+SHIFT+I");
+      this.updateStatusBar(`Error check console`);
+      setTimeout(() => this.updateStatusBar(``), 3000);
+    }
+  }
+
+  async critique(editor: Editor) {
+    this.updateStatusBar(`critiquing... `);
+    try {
+      new Notice("Hmmm... thinking...");
+      const response = await this.getGeneration(
+        this.settings,
+        "critique",
+        editor
+      );
+      window.dispatchEvent(
+        new CustomEvent(GenerationEvents.Critique, { detail: response })
       );
       this.insertGeneratedText(response.data[0]?.raw_output, editor);
       this.updateStatusBar(``);
