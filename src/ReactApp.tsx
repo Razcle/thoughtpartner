@@ -52,6 +52,63 @@ export const ResponseArea = () => {
     GenerationEvents.Extend
   );
 
+  const [response, setResponse] = React.useState<GenerateResponse | null>({
+    project_id: "pr_D9b2KI5wYggD3eseYu_tY",
+    num_samples: 1,
+    logprobs: null,
+    suffix: null,
+    user: null,
+    data: [
+      {
+        id: "data_qvd41t4RrWK82IWAb1KGa",
+        output:
+          "- Ben Polson is an Australian businessman and entrepreneur\n- He is the co-founder of Canva, a user-friendly online design platform\n- Prior to Canva, he worked as a designer for various companies including Google and MTV",
+        raw_output:
+          "\n\n- Ben Polson is an Australian businessman and entrepreneur\n- He is the co-founder of Canva, a user-friendly online design platform\n- Prior to Canva, he worked as a designer for various companies including Google and MTV",
+        prompt:
+          "summarise the following text in 3 key bullet points.  First write TL;DR then your summary.\n\n\nBen Polson is an Australian businessman and entrepreneur. He is the co-founder of Canva, a user-friendly online design platform. Prior to Canva, he worked as a designer for various companies including Google and MTV.",
+        inputs: { input: "\nBen Polson is an Australian businessman and entrepreneur. He is t" },
+        model_config: {
+          provider: "OpenAI",
+          endpoint: "Complete",
+          model: "text-davinci-002",
+          prompt_template:
+            "summarise the following text in 3 key bullet points.  First write TL;DR then your summary.\n\n{{input}}",
+          temperature: 0.7,
+          max_tokens: 256,
+          top_p: 1,
+          stop: null,
+          presence_penalty: 0,
+          frequency_penalty: 0,
+          other: {},
+          id: "config_dUQviWDniof6yOtFSteGt",
+        },
+      },
+    ],
+    metadata: null,
+    provider_responses: [
+      {
+        id: "cmpl-6B9plaWhIqMBzhdP1C2bMm9wqnzO0",
+        object: "text_completion",
+        created: 1668117429,
+        model: "text-davinci-002",
+        choices: [
+          {
+            text: "\n\n- Ben Polson is an Australian businessman and entrepreneur\n- He is the co-founder of Canva, a user-friendly online design platform\n- Prior to Canva, he worked as a designer for various companies including Google and MTV",
+            index: 0,
+            logprobs: null,
+            finish_reason: "stop",
+          },
+        ],
+        usage: {
+          prompt_tokens: 70,
+          completion_tokens: 50,
+          total_tokens: 120,
+        },
+      },
+    ],
+  });
+
   return (
     <div className="">
       <div className="my-2">
@@ -66,6 +123,7 @@ export const ResponseArea = () => {
       {response?.data.map((data) => (
         <ResponseCard data={data} />
       ))}
+      <pre className="text-xxs">{JSON.stringify(response, null, 2)}</pre>
     </div>
   );
 };
@@ -127,7 +185,6 @@ const ResponseCard = ({ data }: ResponseCardProps) => {
           </div>
         </div>
       </div>
-      <pre className="">{JSON.stringify(data, null, 2)}</pre>
     </>
   );
 };
