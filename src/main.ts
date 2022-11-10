@@ -60,10 +60,7 @@ export default class ThoughtPartnerPlugin extends Plugin {
     if (editor.listSelections().length > 0) {
       const anchor = editor.listSelections()[0].anchor;
       const head = editor.listSelections()[0].head;
-      if (
-        anchor.line > head.line ||
-        (anchor.line === head.line && anchor.ch > head.ch)
-      ) {
+      if (anchor.line > head.line || (anchor.line === head.line && anchor.ch > head.ch)) {
         cursor = editor.listSelections()[0].anchor;
       }
     }
@@ -120,9 +117,6 @@ export default class ThoughtPartnerPlugin extends Plugin {
 
   async onload() {
     console.log("loading thought-partner plugin");
-
-    // TODO: Could use this to show if 'thought partner' is active
-    // this.addStatusBarItem().setText("Status Bar Text");
 
     // TODO: Could trigger this to allow user to specify any instruction
     // this.addCommand({
@@ -181,10 +175,7 @@ export default class ThoughtPartnerPlugin extends Plugin {
           })
       );
     });
-    this.registerView(
-      SIDE_PANE_VIEW_TYPE,
-      (leaf) => new SidePane(leaf, this.app, this)
-    );
+    this.registerView(SIDE_PANE_VIEW_TYPE, (leaf) => new SidePane(leaf, this.app, this));
     this.addRibbonIcon("cloud-lightning", "Open Thought Partner", (event) => {
       this.activateView();
     });
@@ -271,14 +262,8 @@ export default class ThoughtPartnerPlugin extends Plugin {
     this.updateStatusBar(`writing... `);
     try {
       new Notice("Generating...");
-      const response = await this.getGeneration(
-        this.settings,
-        "Extend",
-        editor
-      );
-      window.dispatchEvent(
-        new CustomEvent(GenerationEvents.Extend, { detail: response })
-      );
+      const response = await this.getGeneration(this.settings, "Extend", editor);
+      window.dispatchEvent(new CustomEvent(GenerationEvents.Extend, { detail: response }));
       this.insertGeneratedText(response.data[0]?.raw_output, editor);
       this.updateStatusBar(``);
     } catch (error) {
@@ -291,14 +276,8 @@ export default class ThoughtPartnerPlugin extends Plugin {
     this.updateStatusBar(`Summarising... `);
     try {
       new Notice("Summarising...");
-      const response = await this.getGeneration(
-        this.settings,
-        "summarise",
-        editor
-      );
-      window.dispatchEvent(
-        new CustomEvent(GenerationEvents.Summarize, { detail: response })
-      );
+      const response = await this.getGeneration(this.settings, "summarise", editor);
+      window.dispatchEvent(new CustomEvent(GenerationEvents.Summarize, { detail: response }));
       this.insertGeneratedText(response.data[0]?.raw_output, editor, "top");
       this.updateStatusBar(``);
     } catch (error) {
@@ -312,14 +291,8 @@ export default class ThoughtPartnerPlugin extends Plugin {
     this.updateStatusBar(`Prose-ifying... `);
     try {
       new Notice("Converting into fluid prose...");
-      const response = await this.getGeneration(
-        this.settings,
-        "proseify",
-        editor
-      );
-      window.dispatchEvent(
-        new CustomEvent(GenerationEvents.Proseify, { detail: response })
-      );
+      const response = await this.getGeneration(this.settings, "proseify", editor);
+      window.dispatchEvent(new CustomEvent(GenerationEvents.Proseify, { detail: response }));
       this.insertGeneratedText(response.data[0]?.raw_output, editor, "bottom");
       this.updateStatusBar(``);
     } catch (error) {
@@ -333,14 +306,8 @@ export default class ThoughtPartnerPlugin extends Plugin {
     this.updateStatusBar(`critiquing... `);
     try {
       new Notice("Hmmm... thinking...");
-      const response = await this.getGeneration(
-        this.settings,
-        "critique",
-        editor
-      );
-      window.dispatchEvent(
-        new CustomEvent(GenerationEvents.Critique, { detail: response })
-      );
+      const response = await this.getGeneration(this.settings, "critique", editor);
+      window.dispatchEvent(new CustomEvent(GenerationEvents.Critique, { detail: response }));
       this.updateStatusBar(``);
     } catch (error) {
       new Notice("Thought Partner: Error check console CTRL+SHIFT+I");
@@ -352,14 +319,8 @@ export default class ThoughtPartnerPlugin extends Plugin {
     this.updateStatusBar(`suggesting improvements... `);
     try {
       new Notice("Hmmm... thinking...");
-      const response = await this.getGeneration(
-        this.settings,
-        "suggestions",
-        editor
-      );
-      window.dispatchEvent(
-        new CustomEvent(GenerationEvents.Suggest, { detail: response })
-      );
+      const response = await this.getGeneration(this.settings, "suggestions", editor);
+      window.dispatchEvent(new CustomEvent(GenerationEvents.Suggest, { detail: response }));
       this.updateStatusBar(``);
     } catch (error) {
       new Notice("Thought Partner: Error check console CTRL+SHIFT+I");
@@ -383,19 +344,14 @@ export default class ThoughtPartnerPlugin extends Plugin {
       active: true,
     });
 
-    this.app.workspace.revealLeaf(
-      this.app.workspace.getLeavesOfType(SIDE_PANE_VIEW_TYPE)[0]
-    );
+    this.app.workspace.revealLeaf(this.app.workspace.getLeavesOfType(SIDE_PANE_VIEW_TYPE)[0]);
   }
 
   /*
    * Listener used to trigger autocomplete
    * It intercepts inputs that could change the current line (e.g. ctrl+n)
    */
-  private keyDownListener = (
-    editor: CodeMirror.Editor,
-    event: KeyboardEvent
-  ) => {
+  private keyDownListener = (editor: CodeMirror.Editor, event: KeyboardEvent) => {
     console.log("keydown", event);
     // const autocomplete = this.autocomplete;
     // const settings = this.settings;

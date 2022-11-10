@@ -15,29 +15,30 @@ const useListener = (eventName: string, handler: (event: Event) => void) => {
 };
 
 export const ResponseArea = () => {
+  // Could potentially handle these differently... that's why they're separate atm.
   const handleExtend = (event: CustomEvent) => {
     console.log({ event });
-    setActiveMode("extend");
+    setActiveMode(GenerationEvents.Extend);
     setResponse(event.detail);
   };
   const handleSummarize = (event: CustomEvent) => {
     console.log({ event });
-    setActiveMode("summarise");
+    setActiveMode(GenerationEvents.Summarize);
     setResponse(event.detail);
   };
   const handleCritique = (event: CustomEvent) => {
     console.log({ event });
-    setActiveMode("critique");
+    setActiveMode(GenerationEvents.Critique);
     setResponse(event.detail);
   };
   const handleProseify = (event: CustomEvent) => {
     console.log({ event });
-    setActiveMode("proseify");
+    setActiveMode(GenerationEvents.Proseify);
     setResponse(event.detail);
   };
   const handleSuggest = (event: CustomEvent) => {
     console.log({ event });
-    setActiveMode("suggestions");
+    setActiveMode(GenerationEvents.Suggest);
     setResponse(event.detail);
   };
 
@@ -47,42 +48,50 @@ export const ResponseArea = () => {
   useListener(GenerationEvents.Proseify, handleProseify);
   useListener(GenerationEvents.Suggest, handleSuggest);
 
-  const [activeMode, setActiveMode] = React.useState<
-    "extend" | "summarise" | "critique" | "proseify" | "suggestions" | null
-  >(null);
-  const [response, setResponse] = React.useState<GenerateResponse | null>(null);
+  const [activeMode, setActiveMode] = React.useState<GenerationEvents | null>(
+    GenerationEvents.Extend
+  );
 
   return (
     <div className="">
-      {activeMode ? activeMode : "Call Thought Partner to see results here."}
-      {activeMode !== null && <ResponseCard response={response} />}
+      <div className="my-2">
+        {activeMode === null && "Call Thought Partner to see results here."}
+        {activeMode === GenerationEvents.Suggest && "Suggstions"}
+        {activeMode === GenerationEvents.Extend && "Extend"}
+        {activeMode === GenerationEvents.Summarize && "Summary"}
+        {activeMode === GenerationEvents.Critique && "Critique"}
+        {activeMode === GenerationEvents.Proseify && "Proseify"}
+      </div>
+
+      {response?.data.map((data) => (
+        <ResponseCard data={data} />
+      ))}
     </div>
   );
 };
 
 interface ResponseCardProps {
-  response: GenerateResponse;
+  data: GenerateResponse["data"][0];
 }
 
-const ResponseCard = ({ response }: ResponseCardProps) => {
+const ResponseCard = ({ data }: ResponseCardProps) => {
   const { plugin } = useObsidianApp();
   const api_key = plugin.settings.humanloop_api_key;
   return (
     <>
       <div>
-        <textarea className="prose w-full" rows={10}>
-          {response?.data?.[0].output}
+        <textarea className="py-1 px-2 prose w-full" rows={10}>
+          {data.output}
         </textarea>
-        <div className="prose select-text cursor-pointer">{response?.data?.[0].output}</div>
         <div className="flex justify-between gap-4 mt-5 ">
           <Button
             onClick={() => {
-              navigator.clipboard.writeText(response.data?.[0].output);
+              navigator.clipboard.writeText(data.output);
               feedback(
                 {
                   group: "actions",
                   label: "copied",
-                  data_id: response.data?.[0].id,
+                  data_id: data.id,
                   user: "obsidian-user",
                 },
                 api_key
@@ -96,12 +105,7 @@ const ResponseCard = ({ response }: ResponseCardProps) => {
             <Button
               onClick={() =>
                 feedback(
-                  {
-                    group: "vote",
-                    label: "upvote",
-                    data_id: response.data?.[0].id,
-                    user: "obsidian-user",
-                  },
+                  { group: "vote", label: "upvote", data_id: data.id, user: "obsidian-user" },
                   api_key
                 )
               }
@@ -112,12 +116,7 @@ const ResponseCard = ({ response }: ResponseCardProps) => {
               onClick={() => {
                 new Notice("Marked as a poor generation");
                 feedback(
-                  {
-                    group: "vote",
-                    label: "downvote",
-                    data_id: response.data?.[0].id,
-                    user: "obsidian-user",
-                  },
+                  { group: "vote", label: "downvote", data_id: data.id, user: "obsidian-user" },
                   api_key
                 );
               }}
@@ -128,7 +127,7 @@ const ResponseCard = ({ response }: ResponseCardProps) => {
           </div>
         </div>
       </div>
-      <pre className="">{JSON.stringify(response, null, 2)}</pre>
+      <pre className="">{JSON.stringify(data, null, 2)}</pre>
     </>
   );
 };
