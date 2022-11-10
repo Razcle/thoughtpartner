@@ -48,7 +48,7 @@ export const feedback = async (
   },
   api_key: string
 ): Promise<FeedbackResponse> => {
-  console.log("feedback", body);
+  console.log("feedback", body, api_key);
   let response;
   try {
     response = JSON.parse(

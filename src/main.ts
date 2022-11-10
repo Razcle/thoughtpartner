@@ -128,9 +128,6 @@ export default class ThoughtPartnerPlugin extends Plugin {
     //   },
     // });
 
-    this.registerDomEvent(document, "click", (evt: MouseEvent) => {
-      console.log("click", evt);
-    });
     this.registerDomEvent(document, "selectionchange", (evt: MouseEvent) => {
       console.log("selectionchange", evt);
     });

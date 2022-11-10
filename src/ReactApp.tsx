@@ -51,7 +51,7 @@ interface ResponseCardProps {
 
 const ResponseCard = ({ response }: ResponseCardProps) => {
   const { plugin } = useObsidianApp();
-  const openai_api_key = plugin.settings.openai_api_key;
+  const api_key = plugin.settings.humanloop_api_key;
 
   return (
     <>
@@ -74,13 +74,25 @@ const ResponseCard = ({ response }: ResponseCardProps) => {
                 data_id: response.data?.[0].id,
                 user: "obsidian-user",
               },
-              openai_api_key
+              api_key
             )
           }
         >
           good
         </button>
-        <button onClick={() => feedback("bad", response.data?.[0].id)}>
+        <button
+          onClick={() =>
+            feedback(
+              {
+                group: "vote",
+                label: "downvote",
+                data_id: response.data?.[0].id,
+                user: "obsidian-user",
+              },
+              api_key
+            )
+          }
+        >
           bad
         </button>
       </div>
