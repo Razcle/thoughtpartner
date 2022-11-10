@@ -7,6 +7,7 @@ export enum GenerationEvents {
   Summarize = "GenerateSummarize",
   Critique = "GenerateCritique",
   Extend = "GenerateExtend",
+  Proseify = "GenerateProseify",
 }
 
 interface ThoughtPartnerSettings {
@@ -149,6 +150,14 @@ export default class ThoughtPartnerPlugin extends Plugin {
             this.critique(this.getEditor());
           })
       );
+      menu.addItem((item) =>
+        item
+          .setTitle("Prose-ify")
+          .setIcon("zap")
+          .onClick(() => {
+            this.proseify(this.getEditor());
+          })
+      );
     });
 
     this.registerView(
@@ -203,6 +212,15 @@ export default class ThoughtPartnerPlugin extends Plugin {
       },
     });
 
+    this.addCommand({
+      id: "prose-ify",
+      name: "prose-ify",
+      icon: "zap",
+      editorCallback: async (editor: Editor) => {
+        this.proseify(editor);
+      },
+    });
+
     // This adds a settings tab so the user can configure various aspects of the plugin
     this.addSettingTab(new ThoughtPartnerSettingTab(this.app, this));
   }
@@ -246,6 +264,27 @@ export default class ThoughtPartnerPlugin extends Plugin {
       const response = await this.getGeneration(
         this.settings,
         "summarise",
+        editor
+      );
+      window.dispatchEvent(
+        new CustomEvent(GenerationEvents.Summarize, { detail: response })
+      );
+      this.insertGeneratedText(response.data[0]?.raw_output, editor);
+      this.updateStatusBar(``);
+    } catch (error) {
+      new Notice("Thought Partner: Error check console CTRL+SHIFT+I");
+      this.updateStatusBar(`Error check console`);
+      setTimeout(() => this.updateStatusBar(``), 3000);
+    }
+  }
+
+  async proseify(editor: Editor) {
+    this.updateStatusBar(`Prose-ifying... `);
+    try {
+      new Notice("Converting into fluid prose...");
+      const response = await this.getGeneration(
+        this.settings,
+        "proseify",
         editor
       );
       window.dispatchEvent(

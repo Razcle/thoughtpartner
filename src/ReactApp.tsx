@@ -1,3 +1,8 @@
+import {
+  CheckIcon,
+  ClipboardCopyIcon,
+  Cross1Icon,
+} from "@radix-ui/react-icons";
 import * as React from "react";
 import { useObsidianApp } from "./AppContext";
 import { feedback, GenerateResponse } from "./humanloop";
@@ -28,19 +33,25 @@ export const ResponseArea = () => {
     setActiveMode("critique");
     setResponse(event.detail);
   };
+  const handleProseify = (event: CustomEvent) => {
+    console.log({ event });
+    setActiveMode("proseify");
+    setResponse(event.detail);
+  };
 
   useListener(GenerationEvents.Extend, handleExtend);
   useListener(GenerationEvents.Summarize, handleSummarize);
   useListener(GenerationEvents.Critique, handleCritique);
+  useListener(GenerationEvents.Proseify, handleProseify);
 
   const [activeMode, setActiveMode] = React.useState<
-    "extend" | "summarise" | "critique" | null
+    "extend" | "summarise" | "critique" | "proseify" | null
   >(null);
   const [response, setResponse] = React.useState<GenerateResponse | null>(null);
 
   return (
     <div className="">
-      {activeMode !== null && <ResponseCard response={response} />}
+      <ResponseCard response={response} />
     </div>
   );
 };
@@ -59,42 +70,86 @@ const ResponseCard = ({ response }: ResponseCardProps) => {
         className=""
         style={{
           borderRadius: "4px",
-          border: "4px solid blue",
-          padding: "10px",
+          border: "2px solid #999",
+          padding: "12px 16px",
         }}
       >
         {response?.data?.[0].output}
-
-        <button
-          onClick={() =>
-            feedback(
-              {
-                group: "vote",
-                label: "upvote",
-                data_id: response.data?.[0].id,
-                user: "obsidian-user",
-              },
-              api_key
-            )
-          }
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            gap: "8px",
+            margin: "20px 0 0 0",
+          }}
         >
-          good
-        </button>
-        <button
-          onClick={() =>
-            feedback(
-              {
-                group: "vote",
-                label: "downvote",
-                data_id: response.data?.[0].id,
-                user: "obsidian-user",
-              },
-              api_key
-            )
-          }
-        >
-          bad
-        </button>
+          <div
+            style={{
+              display: "flex",
+              flexGrow: 1,
+              gap: "4px",
+            }}
+          >
+            <button
+              style={{
+                display: "flex",
+                gap: "4px",
+              }}
+              onClick={() =>
+                feedback(
+                  {
+                    group: "vote",
+                    label: "upvote",
+                    data_id: response.data?.[0].id,
+                    user: "obsidian-user",
+                  },
+                  api_key
+                )
+              }
+            >
+              <CheckIcon />
+              Good
+            </button>
+            <button
+              style={{ display: "flex", gap: "4px" }}
+              onClick={() =>
+                feedback(
+                  {
+                    group: "vote",
+                    label: "downvote",
+                    data_id: response.data?.[0].id,
+                    user: "obsidian-user",
+                  },
+                  api_key
+                )
+              }
+            >
+              <Cross1Icon />
+              Bad
+            </button>
+          </div>
+          <div>
+            <button
+              style={{ display: "flex", gap: "4px" }}
+              onClick={() => {
+                // Copy to clipboard
+                navigator.clipboard.writeText(response.data?.[0].output);
+                feedback(
+                  {
+                    group: "actions",
+                    label: "copied",
+                    data_id: response.data?.[0].id,
+                    user: "obsidian-user",
+                  },
+                  api_key
+                );
+              }}
+            >
+              <ClipboardCopyIcon />
+              Copy
+            </button>
+          </div>
+        </div>
       </div>
       <pre className="">{JSON.stringify(response, null, 2)}</pre>
     </>

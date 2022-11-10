@@ -25,6 +25,8 @@
 		"typescript": "4.4.4"
 	},
 	"dependencies": {
+		"@radix-ui/react-icons": "^1.1.1",
+		"@radix-ui/react-toggle-group": "^1.0.1",
 		"react": "^18.2.0",
 		"react-dom": "^18.2.0",
 		"request": "^2.88.2"
