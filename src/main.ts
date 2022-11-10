@@ -2,12 +2,14 @@ import { Editor, Events, MarkdownView, Notice, Plugin } from "obsidian";
 import { generate, GenerateResponse } from "./humanloop";
 import { ThoughtPartnerSettingTab } from "./settings";
 import { SidePane, SIDE_PANE_VIEW_TYPE } from "./view";
+import "./styles.css";
 
 export enum GenerationEvents {
   Summarize = "GenerateSummarize",
   Critique = "GenerateCritique",
   Extend = "GenerateExtend",
   Proseify = "GenerateProseify",
+  Suggest = "GenerateSuggestions",
 }
 
 interface ThoughtPartnerSettings {
@@ -170,8 +172,15 @@ export default class ThoughtPartnerPlugin extends Plugin {
             this.proseify(this.getEditor());
           })
       );
+      menu.addItem((item) =>
+        item
+          .setTitle("Suggest improvements")
+          .setIcon("zap")
+          .onClick(() => {
+            this.suggestions(this.getEditor());
+          })
+      );
     });
-
     this.registerView(
       SIDE_PANE_VIEW_TYPE,
       (leaf) => new SidePane(leaf, this.app, this)
@@ -184,6 +193,9 @@ export default class ThoughtPartnerPlugin extends Plugin {
     await this.loadSettings();
 
     this.statusBarItemEl = this.addStatusBarItem();
+
+    // This adds a settings tab so the user can configure various aspects of the plugin
+    this.addSettingTab(new ThoughtPartnerSettingTab(this.app, this));
 
     this.addCommand({
       id: "open-view",
@@ -233,8 +245,14 @@ export default class ThoughtPartnerPlugin extends Plugin {
       },
     });
 
-    // This adds a settings tab so the user can configure various aspects of the plugin
-    this.addSettingTab(new ThoughtPartnerSettingTab(this.app, this));
+    this.addCommand({
+      id: "suggestions",
+      name: "suggestions",
+      icon: "zap",
+      editorCallback: async (editor: Editor) => {
+        this.suggestions(editor);
+      },
+    });
   }
 
   onunload() {
@@ -300,9 +318,9 @@ export default class ThoughtPartnerPlugin extends Plugin {
         editor
       );
       window.dispatchEvent(
-        new CustomEvent(GenerationEvents.Summarize, { detail: response })
+        new CustomEvent(GenerationEvents.Proseify, { detail: response })
       );
-      this.insertGeneratedText(response.data[0]?.raw_output, editor);
+      this.insertGeneratedText(response.data[0]?.raw_output, editor, "bottom");
       this.updateStatusBar(``);
     } catch (error) {
       new Notice("Thought Partner: Error check console CTRL+SHIFT+I");
@@ -323,7 +341,25 @@ export default class ThoughtPartnerPlugin extends Plugin {
       window.dispatchEvent(
         new CustomEvent(GenerationEvents.Critique, { detail: response })
       );
-      this.insertGeneratedText(response.data[0]?.raw_output, editor);
+      this.updateStatusBar(``);
+    } catch (error) {
+      new Notice("Thought Partner: Error check console CTRL+SHIFT+I");
+      this.updateStatusBar(`Error check console`);
+      setTimeout(() => this.updateStatusBar(``), 3000);
+    }
+  }
+  async suggestions(editor: Editor) {
+    this.updateStatusBar(`suggesting improvements... `);
+    try {
+      new Notice("Hmmm... thinking...");
+      const response = await this.getGeneration(
+        this.settings,
+        "suggestions",
+        editor
+      );
+      window.dispatchEvent(
+        new CustomEvent(GenerationEvents.Suggest, { detail: response })
+      );
       this.updateStatusBar(``);
     } catch (error) {
       new Notice("Thought Partner: Error check console CTRL+SHIFT+I");

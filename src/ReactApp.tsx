@@ -1,8 +1,5 @@
-import {
-  CheckIcon,
-  ClipboardCopyIcon,
-  Cross1Icon,
-} from "@radix-ui/react-icons";
+import { CheckIcon, ClipboardCopyIcon, Cross1Icon } from "@radix-ui/react-icons";
+import { Notice } from "obsidian";
 import * as React from "react";
 import { useObsidianApp } from "./AppContext";
 import { feedback, GenerateResponse } from "./humanloop";
@@ -38,21 +35,27 @@ export const ResponseArea = () => {
     setActiveMode("proseify");
     setResponse(event.detail);
   };
+  const handleSuggest = (event: CustomEvent) => {
+    console.log({ event });
+    setActiveMode("suggestions");
+    setResponse(event.detail);
+  };
 
   useListener(GenerationEvents.Extend, handleExtend);
   useListener(GenerationEvents.Summarize, handleSummarize);
   useListener(GenerationEvents.Critique, handleCritique);
   useListener(GenerationEvents.Proseify, handleProseify);
+  useListener(GenerationEvents.Suggest, handleSuggest);
 
   const [activeMode, setActiveMode] = React.useState<
-    "extend" | "summarise" | "critique" | "proseify" | null
+    "extend" | "summarise" | "critique" | "proseify" | "suggestions" | null
   >(null);
   const [response, setResponse] = React.useState<GenerateResponse | null>(null);
 
   return (
     <div className="">
       {activeMode ? activeMode : "Call Thought Partner to see results here."}
-      {activeMode && <ResponseCard response={response} />}
+      {activeMode !== null && <ResponseCard response={response} />}
     </div>
   );
 };
@@ -64,38 +67,33 @@ interface ResponseCardProps {
 const ResponseCard = ({ response }: ResponseCardProps) => {
   const { plugin } = useObsidianApp();
   const api_key = plugin.settings.humanloop_api_key;
-
   return (
     <>
-      <div
-        className=""
-        style={{
-          borderRadius: "4px",
-          border: "2px solid #999",
-          padding: "12px 16px",
-        }}
-      >
-        {response?.data?.[0].output}
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            gap: "8px",
-            margin: "20px 0 0 0",
-          }}
-        >
-          <div
-            style={{
-              display: "flex",
-              flexGrow: 1,
-              gap: "4px",
+      <div>
+        <textarea className="prose w-full" rows={10}>
+          {response?.data?.[0].output}
+        </textarea>
+        <div className="prose select-text cursor-pointer">{response?.data?.[0].output}</div>
+        <div className="flex justify-between gap-4 mt-5 ">
+          <Button
+            onClick={() => {
+              navigator.clipboard.writeText(response.data?.[0].output);
+              feedback(
+                {
+                  group: "actions",
+                  label: "copied",
+                  data_id: response.data?.[0].id,
+                  user: "obsidian-user",
+                },
+                api_key
+              );
             }}
           >
-            <button
-              style={{
-                display: "flex",
-                gap: "4px",
-              }}
+            <ClipboardCopyIcon />
+            Copy
+          </Button>
+          <div className="flex grow justify-end gap-2">
+            <Button
               onClick={() =>
                 feedback(
                   {
@@ -108,12 +106,11 @@ const ResponseCard = ({ response }: ResponseCardProps) => {
                 )
               }
             >
-              <CheckIcon />
-              Good
-            </button>
-            <button
-              style={{ display: "flex", gap: "4px" }}
-              onClick={() =>
+              <CheckIcon /> Good
+            </Button>
+            <Button
+              onClick={() => {
+                new Notice("Marked as a poor generation");
                 feedback(
                   {
                     group: "vote",
@@ -122,39 +119,26 @@ const ResponseCard = ({ response }: ResponseCardProps) => {
                     user: "obsidian-user",
                   },
                   api_key
-                )
-              }
-            >
-              <Cross1Icon />
-              Bad
-            </button>
-          </div>
-          <div>
-            <button
-              style={{ display: "flex", gap: "4px" }}
-              onClick={() => {
-                // Copy to clipboard
-                navigator.clipboard.writeText(response.data?.[0].output);
-                feedback(
-                  {
-                    group: "actions",
-                    label: "copied",
-                    data_id: response.data?.[0].id,
-                    user: "obsidian-user",
-                  },
-                  api_key
                 );
               }}
             >
-              <ClipboardCopyIcon />
-              Copy
-            </button>
+              <Cross1Icon />
+              Bad
+            </Button>
           </div>
         </div>
       </div>
-      {/* <pre className="">{JSON.stringify(response, null, 2)}</pre> */}
+      <pre className="">{JSON.stringify(response, null, 2)}</pre>
     </>
   );
+};
+
+interface ButtonProps extends React.ComponentPropsWithoutRef<"button"> {
+  className?: string;
+}
+
+const Button = ({ className, ...props }: ButtonProps) => {
+  return <button className="flex gap-2 px-3 py-1" {...props} />;
 };
 
 export const ReactApp = () => {
@@ -162,7 +146,7 @@ export const ReactApp = () => {
 
   return (
     <main>
-      <h4>Thought Partner</h4>
+      <h4 className="text-2xl leading-loose font-bold">Thought Partner</h4>
       <ResponseArea />
     </main>
   );
