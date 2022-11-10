@@ -120,9 +120,11 @@ export const ResponseArea = () => {
         {activeMode === GenerationEvents.Proseify && "Proseify"}
       </div>
 
-      {response?.data.map((data) => (
-        <ResponseCard data={data} />
-      ))}
+      <div className="flex flex-col gap-5">
+        {response?.data.map((data) => (
+          <ResponseCard key={data.id} data={data} />
+        ))}
+      </div>
       <pre className="text-xxs">{JSON.stringify(response, null, 2)}</pre>
     </div>
   );
@@ -161,18 +163,19 @@ const ResponseCard = ({ data }: ResponseCardProps) => {
           </Button>
           <div className="flex grow justify-end gap-2">
             <Button
-              onClick={() =>
+              onClick={() => {
+                new Notice("Marked as a good generation 👍");
                 feedback(
                   { group: "vote", label: "upvote", data_id: data.id, user: "obsidian-user" },
                   api_key
-                )
-              }
+                );
+              }}
             >
               <CheckIcon /> Good
             </Button>
             <Button
               onClick={() => {
-                new Notice("Marked as a poor generation");
+                new Notice("Marked as a poor generation 👎");
                 feedback(
                   { group: "vote", label: "downvote", data_id: data.id, user: "obsidian-user" },
                   api_key

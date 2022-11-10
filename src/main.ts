@@ -71,13 +71,15 @@ export default class ThoughtPartnerPlugin extends Plugin {
 	Prepare the request parameters
 	*/
   prepareParameters(
+    editor: Editor,
     settings: ThoughtPartnerSettings,
     project_name: string = "Extend",
-    editor: Editor
+    num_samples: number = 1
   ) {
     let bodyParams: any = {
       project: project_name,
       max_tokens: settings.max_tokens,
+      num_samples: num_samples,
       inputs: { input: this.getContext(editor) },
       provider_api_keys: {
         OpenAI: settings.openai_api_key,
@@ -88,11 +90,12 @@ export default class ThoughtPartnerPlugin extends Plugin {
   }
 
   async getGeneration(
+    editor: Editor,
     settings: ThoughtPartnerSettings,
     project_name: string,
-    editor: Editor
+    num_samples: number = 1
   ): Promise<GenerateResponse> {
-    const parameters = this.prepareParameters(settings, project_name, editor);
+    const parameters = this.prepareParameters(editor, settings, project_name);
     try {
       return await generate(parameters, settings.humanloop_api_key);
     } catch (error) {
@@ -262,7 +265,7 @@ export default class ThoughtPartnerPlugin extends Plugin {
     this.updateStatusBar(`writing... `);
     try {
       new Notice("Generating...");
-      const response = await this.getGeneration(this.settings, "Extend", editor);
+      const response = await this.getGeneration(editor, this.settings, "Extend");
       window.dispatchEvent(new CustomEvent(GenerationEvents.Extend, { detail: response }));
       this.insertGeneratedText(response.data[0]?.raw_output, editor);
       this.updateStatusBar(``);
@@ -276,7 +279,7 @@ export default class ThoughtPartnerPlugin extends Plugin {
     this.updateStatusBar(`Summarising... `);
     try {
       new Notice("Summarising...");
-      const response = await this.getGeneration(this.settings, "summarise", editor);
+      const response = await this.getGeneration(editor, this.settings, "summarise");
       window.dispatchEvent(new CustomEvent(GenerationEvents.Summarize, { detail: response }));
       this.insertGeneratedText(response.data[0]?.raw_output, editor, "top");
       this.updateStatusBar(``);
@@ -291,7 +294,7 @@ export default class ThoughtPartnerPlugin extends Plugin {
     this.updateStatusBar(`Prose-ifying... `);
     try {
       new Notice("Converting into fluid prose...");
-      const response = await this.getGeneration(this.settings, "proseify", editor);
+      const response = await this.getGeneration(editor, this.settings, "proseify");
       window.dispatchEvent(new CustomEvent(GenerationEvents.Proseify, { detail: response }));
       this.insertGeneratedText(response.data[0]?.raw_output, editor, "bottom");
       this.updateStatusBar(``);
@@ -306,7 +309,7 @@ export default class ThoughtPartnerPlugin extends Plugin {
     this.updateStatusBar(`critiquing... `);
     try {
       new Notice("Hmmm... thinking...");
-      const response = await this.getGeneration(this.settings, "critique", editor);
+      const response = await this.getGeneration(editor, this.settings, "critique");
       window.dispatchEvent(new CustomEvent(GenerationEvents.Critique, { detail: response }));
       this.updateStatusBar(``);
     } catch (error) {
@@ -319,7 +322,7 @@ export default class ThoughtPartnerPlugin extends Plugin {
     this.updateStatusBar(`suggesting improvements... `);
     try {
       new Notice("Hmmm... thinking...");
-      const response = await this.getGeneration(this.settings, "suggestions", editor);
+      const response = await this.getGeneration(editor, this.settings, "suggestions");
       window.dispatchEvent(new CustomEvent(GenerationEvents.Suggest, { detail: response }));
       this.updateStatusBar(``);
     } catch (error) {
