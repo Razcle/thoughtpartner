@@ -51,7 +51,8 @@ export const ResponseArea = () => {
 
   return (
     <div className="">
-      <ResponseCard response={response} />
+      {activeMode ? activeMode : "Call Thought Partner to see results here."}
+      {activeMode && <ResponseCard response={response} />}
     </div>
   );
 };
@@ -151,7 +152,7 @@ const ResponseCard = ({ response }: ResponseCardProps) => {
           </div>
         </div>
       </div>
-      <pre className="">{JSON.stringify(response, null, 2)}</pre>
+      {/* <pre className="">{JSON.stringify(response, null, 2)}</pre> */}
     </>
   );
 };
@@ -162,7 +163,6 @@ export const ReactApp = () => {
   return (
     <main>
       <h4>Thought Partner</h4>
-      {app?.vault?.getName() || "no vault"}
       <ResponseArea />
     </main>
   );
