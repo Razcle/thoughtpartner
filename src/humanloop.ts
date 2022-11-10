@@ -2,17 +2,14 @@ import { request } from "obsidian";
 
 export interface GenerateResponse {
   //   [any: string]: string;
-  data: { output: string; raw_output: string; id: string }[];
+  data: { output: string; raw_output: string; id: string; prompt: string; model_config: any }[];
 }
 
 export interface FeedbackResponse {
   [any: string]: string;
 }
 
-export const generate = async (
-  body: any,
-  api_key: string
-): Promise<GenerateResponse> => {
+export const generate = async (body: any, api_key: string): Promise<GenerateResponse> => {
   console.log("generate", body);
   let response;
   try {

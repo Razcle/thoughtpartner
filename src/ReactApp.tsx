@@ -1,23 +1,9 @@
 import { CheckIcon, ClipboardCopyIcon, Cross1Icon } from "@radix-ui/react-icons";
+import { Notice } from "obsidian";
 import * as React from "react";
 import { useObsidianApp } from "./AppContext";
 import { feedback, GenerateResponse } from "./humanloop";
 import { GenerationEvents } from "./main";
-import "./styles.css";
-
-const styles = {
-  section: {
-    fontSize: "18px",
-    color: "#292b2c",
-    backgroundColor: "#fff",
-    padding: "0 20px",
-  },
-  wrapper: {
-    textAlign: "center",
-    margin: "0 auto",
-    marginTop: "50px",
-  },
-};
 
 const useListener = (eventName: string, handler: (event: Event) => void) => {
   React.useEffect(() => {
@@ -81,12 +67,14 @@ interface ResponseCardProps {
 const ResponseCard = ({ response }: ResponseCardProps) => {
   const { plugin } = useObsidianApp();
   const api_key = plugin.settings.humanloop_api_key;
-
   return (
     <>
       <div>
-        {response?.data?.[0].output}
-        <div className="flex justify-between gap-8 mt-20">
+        <textarea className="prose w-full" rows={10}>
+          {response?.data?.[0].output}
+        </textarea>
+        <div className="prose select-text cursor-pointer">{response?.data?.[0].output}</div>
+        <div className="flex justify-between gap-4 mt-5 ">
           <Button
             onClick={() => {
               navigator.clipboard.writeText(response.data?.[0].output);
@@ -104,7 +92,7 @@ const ResponseCard = ({ response }: ResponseCardProps) => {
             <ClipboardCopyIcon />
             Copy
           </Button>
-          <div className="flex grow justify-end gap-2 ">
+          <div className="flex grow justify-end gap-2">
             <Button
               onClick={() =>
                 feedback(
@@ -121,7 +109,8 @@ const ResponseCard = ({ response }: ResponseCardProps) => {
               <CheckIcon /> Good
             </Button>
             <Button
-              onClick={() =>
+              onClick={() => {
+                new Notice("Marked as a poor generation");
                 feedback(
                   {
                     group: "vote",
@@ -130,8 +119,8 @@ const ResponseCard = ({ response }: ResponseCardProps) => {
                     user: "obsidian-user",
                   },
                   api_key
-                )
-              }
+                );
+              }}
             >
               <Cross1Icon />
               Bad
@@ -139,7 +128,7 @@ const ResponseCard = ({ response }: ResponseCardProps) => {
           </div>
         </div>
       </div>
-      {/* <pre className="">{JSON.stringify(response, null, 2)}</pre> */}
+      <pre className="">{JSON.stringify(response, null, 2)}</pre>
     </>
   );
 };
@@ -157,7 +146,7 @@ export const ReactApp = () => {
 
   return (
     <main>
-      <h4 className="text-xl  font-bold">Thought Partner</h4>
+      <h4 className="text-2xl leading-loose font-bold">Thought Partner</h4>
       <ResponseArea />
     </main>
   );
