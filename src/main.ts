@@ -134,34 +134,11 @@ export default class ThoughtPartnerPlugin extends Plugin {
       SIDE_PANE_VIEW_TYPE,
       (leaf) => new SidePane(leaf, this.app)
     );
-    this.addRibbonIcon("dice", "Open Thought Partner", (event) => {
+    this.addRibbonIcon("cloud-lightning", "Open Thought Partner", (event) => {
       this.activateView();
     });
     await this.loadSettings();
     this.statusBarItemEl = this.addStatusBarItem();
-
-    // This creates an icon in the left ribbon.
-    this.addRibbonIcon(
-      "pencil_icon",
-      "Generate Text!",
-      async (evt: MouseEvent) => {
-        // Called when the user clicks the icon.
-        const activeFile = this.app.workspace.getActiveFile();
-        this.updateStatusBar(`processing... `);
-        const activeView = this.getActiveView();
-        if (activeView !== null) {
-          const editor = activeView.editor;
-          try {
-            await this.getGeneration(this.settings, "Extend", editor);
-            this.updateStatusBar(``);
-          } catch (error) {
-            new Notice("Thought Partner: Error check console CTRL+SHIFT+I");
-            this.updateStatusBar(`Error: Check Console`);
-            setTimeout(() => this.updateStatusBar(``), 3000);
-          }
-        }
-      }
-    );
 
     this.addCommand({
       id: "open-view",
