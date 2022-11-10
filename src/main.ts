@@ -9,8 +9,10 @@ import {
   Plugin,
   PluginSettingTab,
   Setting,
+  EditorSuggest,
 } from "obsidian";
 import { extractText, generate, GenerateResponse } from "./humanloop";
+import { ExampleModal } from "./modal";
 import { ThoughtPartnerSettingTab } from "./settings";
 import { SidePane, SIDE_PANE_VIEW_TYPE } from "./view";
 
@@ -73,7 +75,6 @@ export default class ThoughtPartnerPlugin extends Plugin {
   /*
 	Prepare the request parameters
 	*/
-
   prepareParameters(
     settings: ThoughtPartnerSettings,
     project_name: string = "Extend",
@@ -104,6 +105,7 @@ export default class ThoughtPartnerPlugin extends Plugin {
     }
   }
 
+  // TODO: fix. I think this only returns a line of text.
   getContext(editor: Editor) {
     let selectedText = editor.getSelection();
     if (selectedText.length === 0) {
@@ -127,8 +129,62 @@ export default class ThoughtPartnerPlugin extends Plugin {
   }
 
   async onload() {
+    console.log("loading thought-partner plugin");
+
     addIcon("pencil_icon", pencil_icon);
     addIcon("appPencile_icon", appPencile_icon);
+    this.registerCodeMirror((cm) => {
+      console.log("codemirror");
+      cm.on("keydown", console.log);
+    });
+
+    // TODO: Could use this to show if 'thought partner' is active
+    // this.addStatusBarItem().setText("Status Bar Text");
+
+    // TODO: Could trigger this to allow user to specify any instruction
+    // this.addCommand({
+    //   id: "open-sample-modal",
+    //   name: "Open Sample Modal",
+    //   // callback: () => {
+    //   // 	console.log('Simple Callback');
+    //   // },
+    //   checkCallback: (checking: boolean) => {
+    //     let leaf = this.app.workspace.activeLeaf;
+    //     if (leaf) {
+    //       if (!checking) {
+    //         new ExampleModal(this.app).open();
+    //       }
+    //       return true;
+    //     }
+    //     return false;
+    //   },
+    // });
+
+    this.registerDomEvent(document, "click", (evt: MouseEvent) => {
+      console.log("click", evt);
+    });
+    this.registerDomEvent(document, "selectionchange", (evt: MouseEvent) => {
+      console.log("selectionchange", evt);
+    });
+
+    this.app.workspace.on("editor-menu", (menu) => {
+      menu.addItem((item) =>
+        item
+          .setTitle("Summarise")
+          .setIcon("zap")
+          .onClick(() => {
+            this.summarise(this.getEditor());
+          })
+      );
+      menu.addItem((item) =>
+        item
+          .setTitle("Critique")
+          .setIcon("zap")
+          .onClick(() => {
+            this.summarise(this.getEditor());
+          })
+      );
+    });
 
     this.registerView(
       SIDE_PANE_VIEW_TYPE,
@@ -137,6 +193,8 @@ export default class ThoughtPartnerPlugin extends Plugin {
     this.addRibbonIcon("cloud-lightning", "Open Thought Partner", (event) => {
       this.activateView();
     });
+    this.registerEvent(Events);
+
     await this.loadSettings();
     this.statusBarItemEl = this.addStatusBarItem();
 
@@ -157,6 +215,7 @@ export default class ThoughtPartnerPlugin extends Plugin {
       editorCallback: async (editor: Editor) => {
         this.updateStatusBar(`writing... `);
         try {
+          new Notice("Generating...");
           const response = await this.getGeneration(
             this.settings,
             "Extend",
@@ -181,23 +240,7 @@ export default class ThoughtPartnerPlugin extends Plugin {
       icon: "appPencile_icon",
       hotkeys: [{ modifiers: ["Ctrl"], key: "t" }],
       editorCallback: async (editor: Editor) => {
-        this.updateStatusBar(`summarising... `);
-        try {
-          const response = await this.getGeneration(
-            this.settings,
-            "summarise",
-            editor
-          );
-          window.dispatchEvent(
-            new CustomEvent(GenerationEvents.Summarize, { detail: response })
-          );
-          this.insertGeneratedText(response.data[0]?.raw_output, editor);
-          this.updateStatusBar(``);
-        } catch (error) {
-          new Notice("Thought Partner: Error check console CTRL+SHIFT+I");
-          this.updateStatusBar(`Error check console`);
-          setTimeout(() => this.updateStatusBar(``), 3000);
-        }
+        this.summarise(editor);
       },
     });
 
@@ -209,6 +252,7 @@ export default class ThoughtPartnerPlugin extends Plugin {
       editorCallback: async (editor: Editor) => {
         this.updateStatusBar(`critiquing... `);
         try {
+          new Notice("Hmmm... thinking...");
           const response = await this.getGeneration(
             this.settings,
             "critique",
@@ -235,6 +279,36 @@ export default class ThoughtPartnerPlugin extends Plugin {
     this.app.workspace.detachLeavesOfType(SIDE_PANE_VIEW_TYPE);
   }
 
+  getEditor() {
+    const activeView = this.app.workspace.getActiveViewOfType(MarkdownView);
+    if (activeView) {
+      return activeView.editor;
+    }
+    return null;
+  }
+
+  async summarise(editor: Editor) {
+    this.updateStatusBar(`summarising... `);
+
+    try {
+      new Notice("Summarizing...");
+      const response = await this.getGeneration(
+        this.settings,
+        "summarise",
+        editor
+      );
+      window.dispatchEvent(
+        new CustomEvent(GenerationEvents.Summarize, { detail: response })
+      );
+      this.insertGeneratedText(response.data[0]?.raw_output, editor);
+      this.updateStatusBar(``);
+    } catch (error) {
+      new Notice("Thought Partner: Error check console CTRL+SHIFT+I");
+      this.updateStatusBar(`Error check console`);
+      setTimeout(() => this.updateStatusBar(``), 3000);
+    }
+  }
+
   async loadSettings() {
     this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());
   }
@@ -254,4 +328,51 @@ export default class ThoughtPartnerPlugin extends Plugin {
       this.app.workspace.getLeavesOfType(SIDE_PANE_VIEW_TYPE)[0]
     );
   }
+
+  /*
+   * Listener used to trigger autocomplete
+   * It intercepts inputs that could change the current line (e.g. ctrl+n)
+   */
+  private keyDownListener = (
+    editor: CodeMirror.Editor,
+    event: KeyboardEvent
+  ) => {
+    console.log("keydown", event);
+    // const autocomplete = this.autocomplete;
+    // const settings = this.settings;
+    // const autoSelect = settings.autoSelect;
+
+    // if (
+    //   autocomplete.isShown &&
+    //   autocomplete.tokenizer.isWordSeparator(event.key)
+    // ) {
+    //   this.autocomplete.removeViewFrom(editor);
+    //   return;
+    // } else if (autocomplete.isShown) return;
+
+    // // Trigger like Vim autocomplete (ctrl+p/n)
+    // if (
+    //   isVimTrigger({
+    //     triggerLikeVim: settings.triggerLikeVim,
+    //     editor,
+    //     event,
+    //   })
+    // ) {
+    //   this.justTriggeredBy = "vim";
+
+    //   autocomplete.toggleViewIn(editor, {
+    //     autoSelect,
+    //     showEmptyMatch: !settings.autoTrigger,
+    //   });
+
+    //   if (event.key === "p") autocomplete.selectLastSuggestion();
+    // } else if (isAutoTrigger(editor, event, autocomplete.tokenizer, settings)) {
+    //   this.justTriggeredBy = "autotrigger";
+
+    //   autocomplete.toggleViewIn(editor, {
+    //     autoSelect,
+    //     showEmptyMatch: !settings.autoTrigger,
+    //   });
+    // }
+  };
 }
