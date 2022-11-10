@@ -2,7 +2,7 @@ import { request } from "obsidian";
 
 export interface GenerateResponse {
   //   [any: string]: string;
-  logs: { output: string; id: string }[];
+  data: { output: string; raw_output: string; id: string }[];
 }
 
 export interface FeedbackResponse {
@@ -13,11 +13,12 @@ export const generate = async (
   body: any,
   api_key: string
 ): Promise<GenerateResponse> => {
+  console.log("generate", body);
   let response;
   try {
     response = JSON.parse(
       await request({
-        url: "https://api.humanloop.com/v1/generate",
+        url: "https://api.humanloop.com/v2/generate",
         method: "POST",
         body: JSON.stringify(body),
         headers: {
@@ -34,7 +35,7 @@ export const generate = async (
 };
 
 export const extractText = (response: GenerateResponse): string => {
-  const text = response.logs[0]?.output;
+  const text = response.data[0]?.raw_output;
   return text;
 };
 
@@ -47,7 +48,7 @@ export const feedback = async (
   try {
     response = JSON.parse(
       await request({
-        url: "https://api.humanloop.com/v1/feedback",
+        url: "https://api.humanloop.com/v2/feedback",
         method: "POST",
         body: JSON.stringify(body),
         headers: {

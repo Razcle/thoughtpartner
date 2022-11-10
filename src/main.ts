@@ -190,8 +190,7 @@ export default class ThoughtPartnerPlugin extends Plugin {
           window.dispatchEvent(
             new CustomEvent(GenerationEvents.Extend, { detail: response })
           );
-          const text = extractText(response);
-          this.insertGeneratedText(text, editor);
+          this.insertGeneratedText(response.data[0]?.raw_output, editor);
           this.updateStatusBar(``);
         } catch (error) {
           new Notice("Thought Partner: Error check console CTRL+SHIFT+I");
@@ -217,10 +216,7 @@ export default class ThoughtPartnerPlugin extends Plugin {
           window.dispatchEvent(
             new CustomEvent(GenerationEvents.Summarize, { detail: response })
           );
-          const text = extractText(response);
-          console.log({ text });
-          this.insertGeneratedText(text, editor);
-
+          this.insertGeneratedText(response.data[0]?.raw_output, editor);
           this.updateStatusBar(``);
         } catch (error) {
           new Notice("Thought Partner: Error check console CTRL+SHIFT+I");
@@ -243,12 +239,10 @@ export default class ThoughtPartnerPlugin extends Plugin {
             "critique",
             editor
           );
-          const text = extractText(response);
-
           window.dispatchEvent(
-            new CustomEvent(GenerationEvents.Critique, { detail: text })
+            new CustomEvent(GenerationEvents.Critique, { detail: response })
           );
-          this.insertGeneratedText(text, editor);
+          this.insertGeneratedText(response.data[0]?.raw_output, editor);
           this.updateStatusBar(``);
         } catch (error) {
           new Notice("Thought Partner: Error check console CTRL+SHIFT+I");

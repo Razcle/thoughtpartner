@@ -68,13 +68,25 @@ interface ResponseCardProps {
 
 const ResponseCard = ({ response }: ResponseCardProps) => {
   return (
-    <div
-      className=""
-      style={{ borderRadius: "4px", border: "4px solid blue", padding: "10px" }}
-    >
-      <button onClick={() => feedback("good", "sd")}>good</button>
-      <button onClick={() => feedback("bad", "sd")}>bad</button>
-    </div>
+    <>
+      <div
+        className=""
+        style={{
+          borderRadius: "4px",
+          border: "4px solid blue",
+          padding: "10px",
+        }}
+      >
+        {response?.data.[0].output}
+        <button onClick={() => feedback("good", response.data?.[0].id)}>
+          good
+        </button>
+        <button onClick={() => feedback("bad", response.data?.[0].id)}>
+          bad
+        </button>
+      </div>
+      <pre className="">{JSON.stringify(response, null, 2)}</pre>
+    </>
   );
 };
 
