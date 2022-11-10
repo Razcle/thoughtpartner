@@ -137,10 +137,33 @@ interface ResponseCardProps {
 const ResponseCard = ({ data }: ResponseCardProps) => {
   const { plugin } = useObsidianApp();
   const api_key = plugin.settings.humanloop_api_key;
+
+  const textareaRef = React.useRef<HTMLTextAreaElement>(null);
+
   return (
     <>
       <div>
-        <textarea className="py-1 px-2 prose w-full" rows={10}>
+        <textarea
+          className="py-1 px-2 prose w-full"
+          rows={10}
+          ref={textareaRef}
+          onBlur={(event) => {
+            new Notice("Sending this as a correction");
+            // If the value has changed send this as a correction
+            if (event.target.value !== data.output) {
+              console.log("Sending correction");
+              feedback(
+                {
+                  group: "correction",
+                  text: event.target.value,
+                  data_id: data.id,
+                  user: "obsidian-user",
+                },
+                api_key
+              );
+            }
+          }}
+        >
           {data.output}
         </textarea>
         <div className="flex justify-between gap-4 mt-5 ">
