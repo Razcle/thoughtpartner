@@ -147,6 +147,7 @@ const ResponseCard = ({ data }: ResponseCardProps) => {
           <Button
             onClick={() => {
               navigator.clipboard.writeText(data.output);
+              new Notice("Copied to clipboard 📋");
               feedback(
                 {
                   group: "actions",
