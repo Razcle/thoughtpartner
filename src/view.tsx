@@ -11,7 +11,6 @@ export class SidePane extends ItemView {
   constructor(leaf: WorkspaceLeaf, app: App) {
     super(leaf);
     this.app = app;
-    console.log(app.vault.getName());
   }
 
   getViewType() {
@@ -24,7 +23,6 @@ export class SidePane extends ItemView {
 
   async onOpen() {
     const root = createRoot(this.containerEl.children[1]);
-    console.log("from open", this.app.vault.getName());
     root.render(
       <AppContext.Provider value={this.app}>
         <ReactApp />
