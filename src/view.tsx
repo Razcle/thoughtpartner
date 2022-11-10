@@ -1,16 +1,27 @@
-import { App, ItemView, WorkspaceLeaf } from "obsidian";
+import { App, ItemView, MarkdownView, WorkspaceLeaf } from "obsidian";
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 import { ReactApp } from "./ReactApp";
 import { createRoot } from "react-dom/client";
-import { AppContext } from "./AppContext";
+import { ObsidianPluginContext } from "./AppContext";
+import ThoughtPartnerPlugin from "./main";
 
 export const SIDE_PANE_VIEW_TYPE = "thought-partner-view";
 
 export class SidePane extends ItemView {
-  constructor(leaf: WorkspaceLeaf, app: App) {
+  private plugin: ThoughtPartnerPlugin;
+  private markdownView: MarkdownView;
+
+  constructor(
+    leaf: WorkspaceLeaf,
+    app: App,
+    plugin: ThoughtPartnerPlugin,
+    markdownView: MarkdownView
+  ) {
     super(leaf);
     this.app = app;
+    this.plugin = plugin;
+    this.markdownView = markdownView;
   }
 
   getViewType() {
@@ -24,9 +35,15 @@ export class SidePane extends ItemView {
   async onOpen() {
     const root = createRoot(this.containerEl.children[1]);
     root.render(
-      <AppContext.Provider value={this.app}>
+      <ObsidianPluginContext.Provider
+        value={{
+          app: this.app,
+          plugin: this.plugin,
+          markdownView: this.markdownView,
+        }}
+      >
         <ReactApp />
-      </AppContext.Provider>
+      </ObsidianPluginContext.Provider>
     );
   }
 

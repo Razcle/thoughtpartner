@@ -128,9 +128,6 @@ export default class ThoughtPartnerPlugin extends Plugin {
     //   },
     // });
 
-    this.registerDomEvent(document, "click", (evt: MouseEvent) => {
-      console.log("click", evt);
-    });
     this.registerDomEvent(document, "selectionchange", (evt: MouseEvent) => {
       console.log("selectionchange", evt);
     });
@@ -156,24 +153,22 @@ export default class ThoughtPartnerPlugin extends Plugin {
 
     this.registerView(
       SIDE_PANE_VIEW_TYPE,
-      (leaf) => new SidePane(leaf, this.app)
+      (leaf) => new SidePane(leaf, this.app, this, this.getActiveView())
     );
     this.addRibbonIcon("cloud-lightning", "Open Thought Partner", (event) => {
       this.activateView();
     });
-    this.registerEvent(Events);
-
-    await this.loadSettings();
-    this.statusBarItemEl = this.addStatusBarItem();
-
     this.addCommand({
       id: "open-view",
       name: "Open Thought Partner",
-      icon: "zap ",
+      icon: "cloud-lightning",
       editorCallback: async (editor: Editor) => {
         this.activateView();
       },
     });
+
+    await this.loadSettings();
+    this.statusBarItemEl = this.addStatusBarItem();
 
     this.addCommand({
       id: "extend-text",
@@ -214,7 +209,7 @@ export default class ThoughtPartnerPlugin extends Plugin {
   }
 
   getEditor() {
-    const activeView = this.app.workspace.getActiveViewOfType(MarkdownView);
+    const activeView = this.getActiveView();
     if (activeView) {
       return activeView.editor;
     }
@@ -292,12 +287,10 @@ export default class ThoughtPartnerPlugin extends Plugin {
   }
   async activateView() {
     this.app.workspace.detachLeavesOfType(SIDE_PANE_VIEW_TYPE);
-
     await this.app.workspace.getRightLeaf(false).setViewState({
       type: SIDE_PANE_VIEW_TYPE,
       active: true,
     });
-
     this.app.workspace.revealLeaf(
       this.app.workspace.getLeavesOfType(SIDE_PANE_VIEW_TYPE)[0]
     );

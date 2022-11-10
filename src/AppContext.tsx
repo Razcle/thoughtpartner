@@ -1,8 +1,16 @@
-import { App } from "obsidian";
+import { App, MarkdownView } from "obsidian";
 import * as React from "react";
+import ThoughtPartnerPlugin from "./main";
 
-export const AppContext = React.createContext<App>(null);
+interface ObsidianPluginContextInterface {
+  app: App;
+  plugin: ThoughtPartnerPlugin;
+  markdownView: MarkdownView;
+}
 
-export const useObsidianApp = (): App | undefined => {
-  return React.useContext(AppContext);
+export const ObsidianPluginContext =
+  React.createContext<ObsidianPluginContextInterface | null>(null);
+
+export const useObsidian = (): ObsidianPluginContextInterface | undefined => {
+  return React.useContext(ObsidianPluginContext);
 };

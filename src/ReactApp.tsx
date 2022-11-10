@@ -1,12 +1,8 @@
-import { App } from "obsidian";
+import { Editor, MarkdownView } from "obsidian";
 import * as React from "react";
-import { useObsidianApp } from "./AppContext";
+import { useObsidian } from "./AppContext";
 import { feedback, GenerateResponse } from "./humanloop";
 import { GenerationEvents } from "./main";
-
-const handleClick = () => {
-  console.log("clicked");
-};
 
 const useListener = (eventName: string, handler: (event: Event) => void) => {
   React.useEffect(() => {
@@ -41,7 +37,7 @@ export const ResponseArea = () => {
   const [activeMode, setActiveMode] = React.useState<
     "extend" | "summarize" | "critique" | null
   >(null);
-  const [response, setResponse] = React.useState<GenerateResponse>("");
+  const [response, setResponse] = React.useState<GenerateResponse>(null);
 
   return (
     <div className="">
@@ -80,14 +76,62 @@ const ResponseCard = ({ response }: ResponseCardProps) => {
 };
 
 export const ReactApp = () => {
-  const app = useObsidianApp();
+  const { app, plugin, markdownView } = useObsidian();
+  console.log({ md: markdownView, editor: markdownView?.editor });
+
+  // console.log("ajksfhkjha");
+  // app.workspace.iterateAllLeaves((leaf) => {
+  //   console.log(leaf.getViewState().type);
+  // });
+  // app.workspace.getActiveViewOfType
+  // console.log(app?.workspace?.getActiveViewOfType(MarkdownView));
+  const getEditor = (): Editor | null => {
+    // app?.workspace?.getActiveViewOfType.bind(app);
+    // console.log(app?.workspace?.getActiveViewOfType());
+    console.log({
+      appname: app?.vault?.getName(),
+      workspace: app?.workspace?.getActiveFile()?.basename,
+      editor: app?.workspace?.getActiveViewOfType(MarkdownView),
+      // view: plugin.getActiveView(),
+    });
+    const view = app.workspace.getActiveViewOfType(MarkdownView);
+    if (view) {
+      return view.editor;
+    }
+    return null;
+  };
+
+  const [context, setContext] = React.useState<string | null>(
+    // plugin.getContext(getEditor())
+    null
+  );
+  // plugin.getContext(getEditor())
+
+  const handleClick = () => {
+    const editor = getEditor();
+    app.workspace.iterateAllLeaves((leaf) => {
+      console.log(leaf.getViewState());
+    });
+    console.log({ editor });
+    if (editor) {
+      const context = plugin?.getContext(editor);
+      console.log({ context });
+      setContext(context);
+    }
+  };
 
   return (
     <main>
       <h4>Thought Partner</h4>
       {app?.vault?.getName() || "no vault"}
+      {/* Editor content */}
+      {app?.workspace?.getActiveFile()?.basename || "no file"}
+
+      <button onClick={() => setTimeout(handleClick, 1000)}>get context</button>
+      <br />
+      {/* {getEditor()} */}
+      {context}
       <ResponseArea />
-      <button onClick={handleClick}>summarise</button>
     </main>
   );
 };
