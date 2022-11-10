@@ -20,7 +20,7 @@ interface ThoughtPartnerSettings {
 
 const DEFAULT_SETTINGS: ThoughtPartnerSettings = {
   openai_api_key: "",
-  humanloop_api_key: "",
+  humanloop_api_key: "sk_62845aad20664ad37dea7b9513ca97b5",
   context: "",
   showStatusBar: true,
   max_tokens: 256,
