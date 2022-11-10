@@ -2,6 +2,7 @@ import { Editor, Events, MarkdownView, Notice, Plugin } from "obsidian";
 import { generate, GenerateResponse } from "./humanloop";
 import { ThoughtPartnerSettingTab } from "./settings";
 import { SidePane, SIDE_PANE_VIEW_TYPE } from "./view";
+import "./styles.css";
 
 export enum GenerationEvents {
   Summarize = "GenerateSummarize",
@@ -180,7 +181,6 @@ export default class ThoughtPartnerPlugin extends Plugin {
           })
       );
     });
-
     this.registerView(
       SIDE_PANE_VIEW_TYPE,
       (leaf) => new SidePane(leaf, this.app, this)
@@ -193,6 +193,9 @@ export default class ThoughtPartnerPlugin extends Plugin {
     await this.loadSettings();
 
     this.statusBarItemEl = this.addStatusBarItem();
+
+    // This adds a settings tab so the user can configure various aspects of the plugin
+    this.addSettingTab(new ThoughtPartnerSettingTab(this.app, this));
 
     this.addCommand({
       id: "open-view",
@@ -250,9 +253,6 @@ export default class ThoughtPartnerPlugin extends Plugin {
         this.suggestions(editor);
       },
     });
-
-    // This adds a settings tab so the user can configure various aspects of the plugin
-    this.addSettingTab(new ThoughtPartnerSettingTab(this.app, this));
   }
 
   onunload() {

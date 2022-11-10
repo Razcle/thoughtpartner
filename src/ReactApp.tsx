@@ -1,12 +1,23 @@
-import {
-  CheckIcon,
-  ClipboardCopyIcon,
-  Cross1Icon,
-} from "@radix-ui/react-icons";
+import { CheckIcon, ClipboardCopyIcon, Cross1Icon } from "@radix-ui/react-icons";
 import * as React from "react";
 import { useObsidianApp } from "./AppContext";
 import { feedback, GenerateResponse } from "./humanloop";
 import { GenerationEvents } from "./main";
+import "./styles.css";
+
+const styles = {
+  section: {
+    fontSize: "18px",
+    color: "#292b2c",
+    backgroundColor: "#fff",
+    padding: "0 20px",
+  },
+  wrapper: {
+    textAlign: "center",
+    margin: "0 auto",
+    marginTop: "50px",
+  },
+};
 
 const useListener = (eventName: string, handler: (event: Event) => void) => {
   React.useEffect(() => {
@@ -58,7 +69,7 @@ export const ResponseArea = () => {
   return (
     <div className="">
       {activeMode ? activeMode : "Call Thought Partner to see results here."}
-      {activeMode && <ResponseCard response={response} />}
+      {activeMode !== null && <ResponseCard response={response} />}
     </div>
   );
 };
@@ -73,35 +84,28 @@ const ResponseCard = ({ response }: ResponseCardProps) => {
 
   return (
     <>
-      <div
-        className=""
-        style={{
-          borderRadius: "4px",
-          border: "2px solid #999",
-          padding: "12px 16px",
-        }}
-      >
+      <div>
         {response?.data?.[0].output}
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            gap: "8px",
-            margin: "20px 0 0 0",
-          }}
-        >
-          <div
-            style={{
-              display: "flex",
-              flexGrow: 1,
-              gap: "4px",
+        <div className="flex justify-between gap-8 mt-20">
+          <Button
+            onClick={() => {
+              navigator.clipboard.writeText(response.data?.[0].output);
+              feedback(
+                {
+                  group: "actions",
+                  label: "copied",
+                  data_id: response.data?.[0].id,
+                  user: "obsidian-user",
+                },
+                api_key
+              );
             }}
           >
-            <button
-              style={{
-                display: "flex",
-                gap: "4px",
-              }}
+            <ClipboardCopyIcon />
+            Copy
+          </Button>
+          <div className="flex grow justify-end gap-2 ">
+            <Button
               onClick={() =>
                 feedback(
                   {
@@ -114,11 +118,9 @@ const ResponseCard = ({ response }: ResponseCardProps) => {
                 )
               }
             >
-              <CheckIcon />
-              Good
-            </button>
-            <button
-              style={{ display: "flex", gap: "4px" }}
+              <CheckIcon /> Good
+            </Button>
+            <Button
               onClick={() =>
                 feedback(
                   {
@@ -133,28 +135,7 @@ const ResponseCard = ({ response }: ResponseCardProps) => {
             >
               <Cross1Icon />
               Bad
-            </button>
-          </div>
-          <div>
-            <button
-              style={{ display: "flex", gap: "4px" }}
-              onClick={() => {
-                // Copy to clipboard
-                navigator.clipboard.writeText(response.data?.[0].output);
-                feedback(
-                  {
-                    group: "actions",
-                    label: "copied",
-                    data_id: response.data?.[0].id,
-                    user: "obsidian-user",
-                  },
-                  api_key
-                );
-              }}
-            >
-              <ClipboardCopyIcon />
-              Copy
-            </button>
+            </Button>
           </div>
         </div>
       </div>
@@ -163,12 +144,20 @@ const ResponseCard = ({ response }: ResponseCardProps) => {
   );
 };
 
+interface ButtonProps extends React.ComponentPropsWithoutRef<"button"> {
+  className?: string;
+}
+
+const Button = ({ className, ...props }: ButtonProps) => {
+  return <button className="flex gap-2 px-3 py-1" {...props} />;
+};
+
 export const ReactApp = () => {
   const { app } = useObsidianApp();
 
   return (
     <main>
-      <h4>Thought Partner</h4>
+      <h4 className="text-xl  font-bold">Thought Partner</h4>
       <ResponseArea />
     </main>
   );
