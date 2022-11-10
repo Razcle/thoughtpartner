@@ -40,7 +40,19 @@ export default class ThoughtPartnerPlugin extends Plugin {
     }
   }
 
-  insertGeneratedText(text: string, editor: Editor) {
+  insertGeneratedText(
+    text: string,
+    editor: Editor,
+    location: "top" | "bottom" | "cursor" = "cursor"
+  ) {
+    if (location === "top") {
+      editor.setCursor(0, 0);
+      text += "\n\n";
+    } else if (location === "bottom") {
+      editor.setCursor(editor.lineCount(), 0);
+      text = "\n\n" + text;
+    }
+
     let cursor = editor.getCursor();
     // Insert at the end of any selection
     if (editor.listSelections().length > 0) {
@@ -269,7 +281,7 @@ export default class ThoughtPartnerPlugin extends Plugin {
       window.dispatchEvent(
         new CustomEvent(GenerationEvents.Summarize, { detail: response })
       );
-      this.insertGeneratedText(response.data[0]?.raw_output, editor);
+      this.insertGeneratedText(response.data[0]?.raw_output, editor, "top");
       this.updateStatusBar(``);
     } catch (error) {
       new Notice("Thought Partner: Error check console CTRL+SHIFT+I");
