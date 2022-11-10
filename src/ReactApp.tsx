@@ -91,9 +91,10 @@ const ResponseCard = ({ data }: ResponseCardProps) => {
           rows={10}
           ref={textareaRef}
           onBlur={(event) => {
-            new Notice("Sending this as a correction");
             // If the value has changed send this as a correction
+
             if (event.target.value !== data.output) {
+              new Notice("Sending this as a correction");
               console.log("Sending correction");
               feedback(
                 {
