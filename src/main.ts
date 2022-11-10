@@ -135,7 +135,10 @@ export default class ThoughtPartnerPlugin extends Plugin {
   async onload() {
     addIcon("pencil_icon", pencil_icon);
     addIcon("appPencile_icon", appPencile_icon);
-    this.registerView(SIDE_PANE_VIEW_TYPE, (leaf) => new SidePane(leaf));
+    this.registerView(
+      SIDE_PANE_VIEW_TYPE,
+      (leaf) => new SidePane(leaf, this.app)
+    );
     this.addRibbonIcon("dice", "Open Thought Partner", () => {
       this.activateView();
     });

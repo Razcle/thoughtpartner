@@ -1,19 +1,8 @@
-import { GenerationEvents } from "./main";
 import { App } from "obsidian";
 import * as React from "react";
-import { feedback, GenerateResponse } from "./humanloop";
-export const AppContext = React.createContext<App>(undefined);
-import {
-  addIcon,
-  App,
-  Editor,
-  MarkdownView,
-  Notice,
-  Plugin,
-  PluginSettingTab,
-  Setting,
-} from "obsidian";
 import { useObsidianApp } from "./AppContext";
+import { feedback, GenerateResponse } from "./humanloop";
+import { GenerationEvents } from "./main";
 
 const handleClick = () => {
   console.log("clicked");
@@ -77,7 +66,7 @@ const ResponseCard = ({ response }: ResponseCardProps) => {
           padding: "10px",
         }}
       >
-        {response?.data.[0].output}
+        {response?.data?.[0].output}
         <button onClick={() => feedback("good", response.data?.[0].id)}>
           good
         </button>
