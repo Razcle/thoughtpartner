@@ -38,14 +38,20 @@ export const ResponseArea = () => {
     setActiveMode("proseify");
     setResponse(event.detail);
   };
+  const handleSuggest = (event: CustomEvent) => {
+    console.log({ event });
+    setActiveMode("suggestions");
+    setResponse(event.detail);
+  };
 
   useListener(GenerationEvents.Extend, handleExtend);
   useListener(GenerationEvents.Summarize, handleSummarize);
   useListener(GenerationEvents.Critique, handleCritique);
   useListener(GenerationEvents.Proseify, handleProseify);
+  useListener(GenerationEvents.Suggest, handleSuggest);
 
   const [activeMode, setActiveMode] = React.useState<
-    "extend" | "summarise" | "critique" | "proseify" | null
+    "extend" | "summarise" | "critique" | "proseify" | "suggestions" | null
   >(null);
   const [response, setResponse] = React.useState<GenerateResponse | null>(null);
 

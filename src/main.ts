@@ -8,6 +8,7 @@ export enum GenerationEvents {
   Critique = "GenerateCritique",
   Extend = "GenerateExtend",
   Proseify = "GenerateProseify",
+  Suggest = "GenerateSuggestions",
 }
 
 interface ThoughtPartnerSettings {
@@ -170,6 +171,14 @@ export default class ThoughtPartnerPlugin extends Plugin {
             this.proseify(this.getEditor());
           })
       );
+      menu.addItem((item) =>
+        item
+          .setTitle("Suggest improvements")
+          .setIcon("zap")
+          .onClick(() => {
+            this.suggestions(this.getEditor());
+          })
+      );
     });
 
     this.registerView(
@@ -230,6 +239,15 @@ export default class ThoughtPartnerPlugin extends Plugin {
       icon: "zap",
       editorCallback: async (editor: Editor) => {
         this.proseify(editor);
+      },
+    });
+
+    this.addCommand({
+      id: "suggestions",
+      name: "suggestions",
+      icon: "zap",
+      editorCallback: async (editor: Editor) => {
+        this.suggestions(editor);
       },
     });
 
@@ -300,9 +318,9 @@ export default class ThoughtPartnerPlugin extends Plugin {
         editor
       );
       window.dispatchEvent(
-        new CustomEvent(GenerationEvents.Summarize, { detail: response })
+        new CustomEvent(GenerationEvents.Proseify, { detail: response })
       );
-      this.insertGeneratedText(response.data[0]?.raw_output, editor);
+      this.insertGeneratedText(response.data[0]?.raw_output, editor, "bottom");
       this.updateStatusBar(``);
     } catch (error) {
       new Notice("Thought Partner: Error check console CTRL+SHIFT+I");
@@ -323,7 +341,25 @@ export default class ThoughtPartnerPlugin extends Plugin {
       window.dispatchEvent(
         new CustomEvent(GenerationEvents.Critique, { detail: response })
       );
-      this.insertGeneratedText(response.data[0]?.raw_output, editor);
+      this.updateStatusBar(``);
+    } catch (error) {
+      new Notice("Thought Partner: Error check console CTRL+SHIFT+I");
+      this.updateStatusBar(`Error check console`);
+      setTimeout(() => this.updateStatusBar(``), 3000);
+    }
+  }
+  async suggestions(editor: Editor) {
+    this.updateStatusBar(`suggesting improvements... `);
+    try {
+      new Notice("Hmmm... thinking...");
+      const response = await this.getGeneration(
+        this.settings,
+        "suggestions",
+        editor
+      );
+      window.dispatchEvent(
+        new CustomEvent(GenerationEvents.Suggest, { detail: response })
+      );
       this.updateStatusBar(``);
     } catch (error) {
       new Notice("Thought Partner: Error check console CTRL+SHIFT+I");
