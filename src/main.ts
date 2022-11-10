@@ -98,12 +98,8 @@ export default class ThoughtPartnerPlugin extends Plugin {
   }
 
   updateStatusBar(text: string) {
-    let text2 = "";
-    if (text.length > 0) {
-      text2 = `: ${text}`;
-    }
     if (this.settings.showStatusBar) {
-      this.statusBarItemEl.setText(`Thought Partner'${text2}`);
+      this.statusBarItemEl.setText(`Thought Partner: ${text}`);
     }
   }
 
