@@ -1,5 +1,5 @@
 import { CheckIcon, ClipboardCopyIcon, Cross1Icon } from "@radix-ui/react-icons";
-import { Notice } from "obsidian";
+import { Notice, TextAreaComponent } from "obsidian";
 import * as React from "react";
 import { useObsidianApp } from "./AppContext";
 import { feedback, GenerateResponse } from "./humanloop";
@@ -90,7 +90,7 @@ const ResponseCard = ({ data }: ResponseCardProps) => {
           className="py-1 px-2 prose w-full"
           rows={10}
           ref={textareaRef}
-          onBlur={(event) => {
+          onBlur={(event: React.FocusEvent<HTMLTextAreaElement>) => {
             // If the value has changed send this as a correction
 
             if (event.target.value !== data.output) {

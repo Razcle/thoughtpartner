@@ -39,7 +39,8 @@ export const extractText = (response: GenerateResponse): string => {
 export const feedback = async (
   body: {
     data_id: string;
-    label: string;
+    label?: string;
+    text?: string;
     group: string;
     user: string;
   },
