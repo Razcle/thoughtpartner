@@ -3,6 +3,7 @@ import { generate, GenerateResponse } from "./humanloop";
 import { ThoughtPartnerSettingTab } from "./settings";
 import { SidePane, SIDE_PANE_VIEW_TYPE } from "./view";
 import "./styles.css";
+import { ExampleModal } from "./modal";
 
 export enum GenerationEvents {
   Summarize = "GenerateSummarize",
@@ -147,9 +148,9 @@ export default class ThoughtPartnerPlugin extends Plugin {
     //   },
     // });
 
-    this.registerDomEvent(document, "selectionchange", (evt: MouseEvent) => {
-      console.log("selectionchange", evt);
-    });
+    // this.registerDomEvent(document, "selectionchange", (evt: MouseEvent) => {
+    //   console.log("selectionchange", evt);
+    // });
 
     this.app.workspace.on("editor-menu", (menu) => {
       menu.addItem((item) =>
@@ -316,6 +317,7 @@ export default class ThoughtPartnerPlugin extends Plugin {
     this.updateStatusBar(`critiquing... `);
     try {
       new Notice("Hmmm... thinking...");
+      this.makeSureViewIsOpen();
       const response = await this.getGeneration(editor, this.settings, "critique");
       window.dispatchEvent(new CustomEvent(GenerationEvents.Critique, { detail: response }));
       this.updateStatusBar(``);
@@ -329,6 +331,7 @@ export default class ThoughtPartnerPlugin extends Plugin {
     this.updateStatusBar(`suggesting improvements... `);
     try {
       new Notice("Hmmm... thinking...");
+      this.makeSureViewIsOpen();
       const response = await this.getGeneration(editor, this.settings, "suggestions");
       window.dispatchEvent(new CustomEvent(GenerationEvents.Suggest, { detail: response }));
       this.updateStatusBar(``);
@@ -346,6 +349,16 @@ export default class ThoughtPartnerPlugin extends Plugin {
   async saveSettings() {
     await this.saveData(this.settings);
   }
+  async makeSureViewIsOpen() {
+    const view = this.app.workspace.getLeavesOfType(SIDE_PANE_VIEW_TYPE)[0];
+    if (!view) {
+      await this.app.workspace.getRightLeaf(false).setViewState({
+        type: SIDE_PANE_VIEW_TYPE,
+        active: true,
+      });
+    }
+  }
+
   async activateView() {
     this.app.workspace.detachLeavesOfType(SIDE_PANE_VIEW_TYPE);
 
