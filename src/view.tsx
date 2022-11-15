@@ -25,6 +25,10 @@ export class SidePane extends ItemView {
     return "Thought Partner";
   }
 
+  getIcon(): string {
+    return "thought-partner";
+  }
+
   async onOpen() {
     const root = createRoot(this.containerEl.children[1]);
     root.render(

@@ -1,4 +1,4 @@
-import { Editor, Events, MarkdownView, Notice, Plugin } from "obsidian";
+import { addIcon, Editor, Events, MarkdownView, Notice, Plugin } from "obsidian";
 import { generate, GenerateResponse } from "./humanloop";
 import { ThoughtPartnerSettingTab } from "./settings";
 import { SidePane, SIDE_PANE_VIEW_TYPE } from "./view";
@@ -120,6 +120,13 @@ export default class ThoughtPartnerPlugin extends Plugin {
 
   async onload() {
     console.log("loading thought-partner plugin");
+    addIcon(
+      "thought-partner",
+      `<svg viewBox="0 0 24 24"  stroke-width="1.5">
+        <path d="M23.251,12a3,3,0,0,0-2.183-2.886,2.249,2.249,0,0,0-1.383-3.856,2.262,2.262,0,0,0-.412-.363,3,3,0,0,0-5.46-2.478,2.25,2.25,0,0,0-3.625,0,3,3,0,0,0-5.46,2.478,2.223,2.223,0,0,0-.411.363A2.25,2.25,0,0,0,2.933,9.114a3,3,0,0,0,0,5.773,2.249,2.249,0,0,0,1.384,3.855,2.29,2.29,0,0,0,.411.363,3,3,0,0,0,5.46,2.478,2.25,2.25,0,0,0,3.625,0,3,3,0,0,0,5.46-2.478,2.223,2.223,0,0,0,.411-.363,2.248,2.248,0,0,0,1.384-3.855A3,3,0,0,0,23.251,12Z" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"></path><path d="M13.5,5.25,7.59,12.132a.375.375,0,0,0,.286.618H10.5v6l5.91-6.882a.375.375,0,0,0-.285-.618H13.5Z" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+      </path>
+      </svg>`
+    );
 
     // TODO: Could trigger this to allow user to specify any instruction
     // this.addCommand({
@@ -179,7 +186,7 @@ export default class ThoughtPartnerPlugin extends Plugin {
       );
     });
     this.registerView(SIDE_PANE_VIEW_TYPE, (leaf) => new SidePane(leaf, this.app, this));
-    this.addRibbonIcon("cloud-lightning", "Open Thought Partner", (event) => {
+    this.addRibbonIcon("thought-partner", "Open Thought Partner", (event) => {
       this.activateView();
     });
     this.registerEvent(Events);
@@ -349,48 +356,4 @@ export default class ThoughtPartnerPlugin extends Plugin {
 
     this.app.workspace.revealLeaf(this.app.workspace.getLeavesOfType(SIDE_PANE_VIEW_TYPE)[0]);
   }
-
-  /*
-   * Listener used to trigger autocomplete
-   * It intercepts inputs that could change the current line (e.g. ctrl+n)
-   */
-  private keyDownListener = (editor: CodeMirror.Editor, event: KeyboardEvent) => {
-    console.log("keydown", event);
-    // const autocomplete = this.autocomplete;
-    // const settings = this.settings;
-    // const autoSelect = settings.autoSelect;
-
-    // if (
-    //   autocomplete.isShown &&
-    //   autocomplete.tokenizer.isWordSeparator(event.key)
-    // ) {
-    //   this.autocomplete.removeViewFrom(editor);
-    //   return;
-    // } else if (autocomplete.isShown) return;
-
-    // // Trigger like Vim autocomplete (ctrl+p/n)
-    // if (
-    //   isVimTrigger({
-    //     triggerLikeVim: settings.triggerLikeVim,
-    //     editor,
-    //     event,
-    //   })
-    // ) {
-    //   this.justTriggeredBy = "vim";
-
-    //   autocomplete.toggleViewIn(editor, {
-    //     autoSelect,
-    //     showEmptyMatch: !settings.autoTrigger,
-    //   });
-
-    //   if (event.key === "p") autocomplete.selectLastSuggestion();
-    // } else if (isAutoTrigger(editor, event, autocomplete.tokenizer, settings)) {
-    //   this.justTriggeredBy = "autotrigger";
-
-    //   autocomplete.toggleViewIn(editor, {
-    //     autoSelect,
-    //     showEmptyMatch: !settings.autoTrigger,
-    //   });
-    // }
-  };
 }

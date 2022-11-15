@@ -1,11 +1,11 @@
-# Obsidian Thought Partner
+# Thought Partner plugin for Obsidian
 
 The **Obsidian Thought Partner plugin** is a handy tool that can help you generate text content using the powerful language model GPT-3 directly.
 
 > To use Text generator you need to:
 >
-> -   01 Get an API Key (create an account at OpenAI)
-> -   02 Configure the plugin's setting to use API Key.
+> - 01 Get an API Key (create an account at OpenAI)
+> - 02 Configure the plugin's setting to use API Key.
 
 # 01 Create an account at OpenAI
 
@@ -24,7 +24,6 @@ To generate Open AI API Key.  Follow  the following steps:
 <p align="center">
   <img width="600" height="200"src="./images/20220227121545.png">
 </p>
-
 
 # 02 Configure Text Generator plugin
 
