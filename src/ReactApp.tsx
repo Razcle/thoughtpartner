@@ -107,9 +107,8 @@ const ResponseCard = ({ data }: ResponseCardProps) => {
               );
             }
           }}
-        >
-          {data.output}
-        </textarea>
+          defaultValue={data.output}
+        />
         <div className="flex justify-between gap-4 mt-5 ">
           <Button
             onClick={() => {
