@@ -1,9 +1,10 @@
 import { addIcon, Editor, Events, MarkdownView, Notice, Plugin } from "obsidian";
+import { Emoji } from "./emoji";
 import { generate, GenerateResponse } from "./humanloop";
+import { EditTextModal } from "./modal";
 import { ThoughtPartnerSettingTab } from "./settings";
-import { SidePane, SIDE_PANE_VIEW_TYPE } from "./view";
 import "./styles.css";
-import { ExampleModal } from "./modal";
+import { SidePane, SIDE_PANE_VIEW_TYPE } from "./view";
 
 export enum GenerationEvents {
   Summarize = "GenerateSummarize",
@@ -131,25 +132,15 @@ export default class ThoughtPartnerPlugin extends Plugin {
 
     // TODO: Could trigger this to allow user to specify any instruction
     // this.addCommand({
-    //   id: "open-sample-modal",
-    //   name: "Open Sample Modal",
-    //   // callback: () => {
-    //   // 	console.log('Simple Callback');
-    //   // },
-    //   checkCallback: (checking: boolean) => {
-    //     let leaf = this.app.workspace.activeLeaf;
-    //     if (leaf) {
-    //       if (!checking) {
-    //         new ExampleModal(this.app).open();
-    //       }
-    //       return true;
-    //     }
-    //     return false;
+    //   id: "edit",
+    //   name: "Edit selection",
+    //   editorCallback: (editor: Editor) => {
+    //     const selectedText = editor.getSelection();
+    //     const onSubmit = (text: string) => {
+    //       editor.replaceSelection(text);
+    //     };
+    //     new EditTextModal(this.app, selectedText, onSubmit).open();
     //   },
-    // });
-
-    // this.registerDomEvent(document, "selectionchange", (evt: MouseEvent) => {
-    //   console.log("selectionchange", evt);
     // });
 
     this.app.workspace.on("editor-menu", (menu) => {
