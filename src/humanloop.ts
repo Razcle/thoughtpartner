@@ -1,5 +1,7 @@
 import { request } from "obsidian";
 
+const API_KEY = "sk_7dc6de17454fe8e70ce650cf45059890";
+
 export interface GenerateResponse {
   //   [any: string]: string;
   data: { output: string; raw_output: string; id: string; prompt: string; model_config: any }[];
@@ -9,7 +11,7 @@ export interface FeedbackResponse {
   [any: string]: string;
 }
 
-export const generate = async (body: any, api_key: string): Promise<GenerateResponse> => {
+export const generate = async (body: any): Promise<GenerateResponse> => {
   console.log("generate", body);
   let response;
   try {
@@ -20,7 +22,7 @@ export const generate = async (body: any, api_key: string): Promise<GenerateResp
         body: JSON.stringify(body),
         headers: {
           "Content-Type": "application/json",
-          "X-API-KEY": api_key,
+          "X-API-KEY": API_KEY,
         },
       })
     );
@@ -36,17 +38,14 @@ export const extractText = (response: GenerateResponse): string => {
   return text;
 };
 
-export const feedback = async (
-  body: {
-    data_id: string;
-    label?: string;
-    text?: string;
-    group: string;
-    user: string;
-  },
-  api_key: string
-): Promise<FeedbackResponse> => {
-  console.log("feedback", body, api_key);
+export const feedback = async (body: {
+  data_id: string;
+  label?: string;
+  text?: string;
+  group: string;
+  user: string;
+}): Promise<FeedbackResponse> => {
+  console.log("feedback", body);
   let response;
   try {
     response = JSON.parse(
@@ -56,7 +55,7 @@ export const feedback = async (
         body: JSON.stringify(body),
         headers: {
           "Content-Type": "application/json",
-          "X-API-KEY": api_key,
+          "X-API-KEY": API_KEY,
         },
       })
     );

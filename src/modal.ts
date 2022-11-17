@@ -18,6 +18,9 @@ export class EditTextModal extends Modal {
 
     contentEl.createEl("h1", { text: "Edit selection" });
 
+    // Showing the selection for context
+    contentEl.createEl("p", { text: this.selection });
+
     new Setting(contentEl).setName("Instruction").addText((text) =>
       text.setValue(this.instruction).onChange((value) => {
         this.instruction = value;

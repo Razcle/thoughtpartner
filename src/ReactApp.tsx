@@ -79,7 +79,6 @@ interface ResponseCardProps {
 
 const ResponseCard = ({ data }: ResponseCardProps) => {
   const { plugin } = useObsidianApp();
-  const api_key = plugin.settings.humanloop_api_key;
 
   const textareaRef = React.useRef<HTMLTextAreaElement>(null);
 
@@ -96,15 +95,12 @@ const ResponseCard = ({ data }: ResponseCardProps) => {
             if (event.target.value !== data.output) {
               new Notice("Sending this as a correction");
               console.log("Sending correction");
-              feedback(
-                {
-                  group: "correction",
-                  text: event.target.value,
-                  data_id: data.id,
-                  user: "obsidian-user",
-                },
-                api_key
-              );
+              feedback({
+                group: "correction",
+                text: event.target.value,
+                data_id: data.id,
+                user: "obsidian-user",
+              });
             }
           }}
           defaultValue={data.output}
@@ -114,15 +110,12 @@ const ResponseCard = ({ data }: ResponseCardProps) => {
             onClick={() => {
               navigator.clipboard.writeText(data.output);
               new Notice("Copied to clipboard 📋");
-              feedback(
-                {
-                  group: "actions",
-                  label: "copied",
-                  data_id: data.id,
-                  user: "obsidian-user",
-                },
-                api_key
-              );
+              feedback({
+                group: "actions",
+                label: "copied",
+                data_id: data.id,
+                user: "obsidian-user",
+              });
             }}
           >
             <ClipboardCopyIcon />
@@ -132,10 +125,12 @@ const ResponseCard = ({ data }: ResponseCardProps) => {
             <Button
               onClick={() => {
                 new Notice("Marked as a good generation 👍");
-                feedback(
-                  { group: "vote", label: "upvote", data_id: data.id, user: "obsidian-user" },
-                  api_key
-                );
+                feedback({
+                  group: "vote",
+                  label: "upvote",
+                  data_id: data.id,
+                  user: "obsidian-user",
+                });
               }}
             >
               <CheckIcon /> Good
@@ -143,10 +138,12 @@ const ResponseCard = ({ data }: ResponseCardProps) => {
             <Button
               onClick={() => {
                 new Notice("Marked as a poor generation 👎");
-                feedback(
-                  { group: "vote", label: "downvote", data_id: data.id, user: "obsidian-user" },
-                  api_key
-                );
+                feedback({
+                  group: "vote",
+                  label: "downvote",
+                  data_id: data.id,
+                  user: "obsidian-user",
+                });
               }}
             >
               <Cross1Icon />

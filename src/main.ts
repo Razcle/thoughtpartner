@@ -1,7 +1,5 @@
 import { addIcon, Editor, Events, MarkdownView, Notice, Plugin } from "obsidian";
-import { Emoji } from "./emoji";
 import { generate, GenerateResponse } from "./humanloop";
-import { EditTextModal } from "./modal";
 import { ThoughtPartnerSettingTab } from "./settings";
 import "./styles.css";
 import { SidePane, SIDE_PANE_VIEW_TYPE } from "./view";
@@ -99,7 +97,7 @@ export default class ThoughtPartnerPlugin extends Plugin {
   ): Promise<GenerateResponse> {
     const parameters = this.prepareParameters(editor, settings, project_name);
     try {
-      return await generate(parameters, settings.humanloop_api_key);
+      return await generate(parameters);
     } catch (error) {
       return Promise.reject(error);
     }

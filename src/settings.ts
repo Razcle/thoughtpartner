@@ -29,19 +29,6 @@ export class ThoughtPartnerSettingTab extends PluginSettingTab {
       );
 
     new Setting(containerEl)
-      .setName("Humanloop API Key")
-      .setDesc("Set your Humanloop API Key. Go to https://app.humanloop.com/settings to get it.")
-      .addText((text) =>
-        text
-          .setPlaceholder("Set your humanloop api_key")
-          .setValue(this.plugin.settings.humanloop_api_key)
-          .onChange(async (value) => {
-            this.plugin.settings.humanloop_api_key = value;
-            await this.plugin.saveSettings();
-          })
-      );
-
-    new Setting(containerEl)
       .setName("showStatusBar")
       .setDesc("Show information in the Status Bar")
       .addToggle((v) =>
