@@ -44,19 +44,19 @@ You can access the commands through the command pallette, the right-click menu o
 
 #### **extend** `ctrl+j`
 
-Take the context and generate the next few sentences
+_Take the context and generate the next few sentences_
 
 #### **tldr** `ctrl+t`
 
-Generate a summary of the file and insert it at the top
+_Generate a summary of the file and insert it at the top_
 
 #### **critique** `ctrl+q`
 
-ThoughtPartner will outline possible assumptions or flaws in your reasoning
+_ThoughtPartner will outline possible assumptions or flaws in your reasoning_
 
 #### **prose-ify**
 
-Convert your crappy bullet points notes into flowing prose
+_Convert your crappy bullet points notes into flowing prose_
 
 #### **suggestions**
 
