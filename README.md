@@ -41,6 +41,7 @@ To use the plugin efffectively you need to understand the context that the AI co
 ## Possible commands
 
 You can access the commands through the command pallette, the right-click menu or keyboard shortcuts.
+Please use the feedback buttons ('good'/'bad') on the generations, to help improve the prompts used for each feature.
 
 ### **extend** `ctrl+j`
 
@@ -62,8 +63,6 @@ _Convert your crappy bullet points notes into flowing prose_
 
 _ThoughtPartner will sympathetically evaluate your writing and suggest where there is "room for improvement"_
 
-Please ues the feedback buttons ('good'/'bad') on the generations, to help improve the prompts used for each feature.
-
 # Terms and policy
 
-Your requests and responses will go to OpenAI's API. See the OpenAI [terms](https://openai.com/api/policies/terms/) to understand how that data will gets used.
+Your requests and responses will go via Humanloop to OpenAI's API. See the OpenAI [terms](https://openai.com/api/policies/terms/) to understand how that data will gets used.
