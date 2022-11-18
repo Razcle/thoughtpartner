@@ -48,11 +48,20 @@ For features like "tldr" it will use the whole file.
 
 You can access the commands through the command pallette, the right-click menu or keyboard shortcuts.
 
-- **extend** `ctrl+j`- take the context and generate the next few sentences
-- **tldr** `ctrl+t` - generate a summary of the file and insert it at the top
-- **critique** `ctrl+q`- ThoughtPartner will outline possible assumptions or flaws in your reasoning
-- **prose-ify** - convert your crappy bullet points notes into flowing prose
-- **suggestions** - ThoughtPartner will sympathetically evaluate your writing and suggest where there is "room for improvement"
+**extend** `ctrl+j`
+Take the context and generate the next few sentences
+
+**tldr** `ctrl+t`
+Generate a summary of the file and insert it at the top
+
+**critique** `ctrl+q`
+ThoughtPartner will outline possible assumptions or flaws in your reasoning
+
+**prose-ify**
+Convert your crappy bullet points notes into flowing prose
+
+**suggestions**
+ThoughtPartner will sympathetically evaluate your writing and suggest where there is "room for improvement"
 
 Please ues the feedback buttons ('good'/'bad') on the generations, to help improve the prompts used for each feature.
 
