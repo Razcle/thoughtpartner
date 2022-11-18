@@ -34,37 +34,31 @@ After installing and enabling the ThoughtPartner plugin, go to the settings i
 
 # Usage Guide
 
-### Understanding the context window
+## Understanding the context window
 
-To use the plugin efffectively you need to understand the context that the AI considers. T
+To use the plugin efffectively you need to understand the context that the AI considers. If text is selected, it will use that. If the line is empty it will use as much of the previous content as possible. For features like "tldr" it will use the whole file.
 
-If text is selected, it will use that.
-
-If the line is empty it will use as much of the previous content as possible.
-
-For features like "tldr" it will use the whole file.
-
-### Possible commands
+## Possible commands
 
 You can access the commands through the command pallette, the right-click menu or keyboard shortcuts.
 
-• **extend** `ctrl+j`
+#### **extend** `ctrl+j`
 
 Take the context and generate the next few sentences
 
-• **tldr** `ctrl+t`
+#### **tldr** `ctrl+t`
 
 Generate a summary of the file and insert it at the top
 
-• **critique** `ctrl+q`
+#### **critique** `ctrl+q`
 
 ThoughtPartner will outline possible assumptions or flaws in your reasoning
 
-• **prose-ify**
+#### **prose-ify**
 
 Convert your crappy bullet points notes into flowing prose
 
-• **suggestions**
+#### **suggestions**
 
 ThoughtPartner will sympathetically evaluate your writing and suggest where there is "room for improvement"
 
