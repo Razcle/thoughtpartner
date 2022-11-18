@@ -199,7 +199,7 @@ export default class ThoughtPartnerPlugin extends Plugin {
 
     this.addCommand({
       id: "extend-text",
-      name: "continue writing",
+      name: "extend (continue writing)",
       icon: "zap",
       hotkeys: [{ modifiers: ["Ctrl"], key: "j" }],
       editorCallback: async (editor: Editor) => {
@@ -209,7 +209,7 @@ export default class ThoughtPartnerPlugin extends Plugin {
 
     this.addCommand({
       id: "summarise",
-      name: "Summarise (tldr)",
+      name: "summarise (tldr)",
       icon: "zap",
       hotkeys: [{ modifiers: ["Ctrl"], key: "t" }],
       editorCallback: async (editor: Editor) => {
