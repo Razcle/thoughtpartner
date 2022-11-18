@@ -42,25 +42,25 @@ To use the plugin efffectively you need to understand the context that the AI co
 
 You can access the commands through the command pallette, the right-click menu or keyboard shortcuts.
 
-#### **extend** `ctrl+j`
+### **extend** `ctrl+j`
 
 _Take the context and generate the next few sentences_
 
-#### **tldr** `ctrl+t`
+### **tldr** `ctrl+t`
 
 _Generate a summary of the file and insert it at the top_
 
-#### **critique** `ctrl+q`
+### **critique** `ctrl+q`
 
 _ThoughtPartner will outline possible assumptions or flaws in your reasoning_
 
-#### **prose-ify**
+### **prose-ify**
 
 _Convert your crappy bullet points notes into flowing prose_
 
-#### **suggestions**
+### **suggestions**
 
-ThoughtPartner will sympathetically evaluate your writing and suggest where there is "room for improvement"
+_ThoughtPartner will sympathetically evaluate your writing and suggest where there is "room for improvement"_
 
 Please ues the feedback buttons ('good'/'bad') on the generations, to help improve the prompts used for each feature.
 
