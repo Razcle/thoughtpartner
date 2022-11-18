@@ -1,8 +1,6 @@
 # ThoughtPartner for Obsidian
 
-<p align="center">
   <img height="300" src="./images/DALL·E 2022-11-18 15.26.54 - thought partner svg line logo symmetric.png">
-</p>
 
 The **Obsidian Thought Partner plugin** brings the power of GPT-3 to Obsidian.
 
@@ -29,7 +27,7 @@ Thought Partner uses GPT-3. It's free software, you'll just pay (the very reason
 After installing and enabling the ThoughtPartner plugin, go to the settings in Obsidian and add your API key in settings.
 
 <p align="center">
-  <img height="300" src="./images/settings.png">
+  <img height="174" width="590" src="./images/settings.png">
 </p>
 
 # Usage Guide
@@ -48,11 +46,11 @@ For features like "tldr" it will use the whole file.
 
 You can access the commands through the command pallette, the right-click menu or keyboard shortcuts.
 
-- **extend** `ctrl+j`- take the context and try to generate the next few sentences.
+- **extend** `ctrl+j`- take the context and try to generate the next few sentences
 - **tldr** `ctrl+t` - generate a summary of the file, insert it at the top
 - **critique** `ctrl+q`- ThoughtPartner will outline possible assumptions or flaws in your reasoning
-- **prose-ify** - convert some crappy bullet points notes into flowing prose
-- **suggestions** - Thought partner will try to evaluate your writing and suggest where there is "room for improvement"
+- **prose-ify** - convert your crappy bullet points notes into flowing prose
+- **suggestions** - ThoughtPartner will sympathetically evaluate your writing and suggest where there is "room for improvement"
 
 Please ues the feedback buttons ('good'/'bad') on the generations, to help improve the prompts used for each feature.
 
